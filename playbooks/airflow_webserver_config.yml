@@ -1,6 +1,6 @@
 ---
-- name: "Deploy Airflow"
-  hosts: airflow
+- name: "Config Airflow Webserver"
+  hosts: airflow_webserver
   strategy: linear
   tasks:
     - tosit.tdp.resolve: # noqa unnamed-task
