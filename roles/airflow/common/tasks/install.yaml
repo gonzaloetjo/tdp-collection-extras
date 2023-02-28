@@ -65,8 +65,3 @@
     name: "redis"
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
-
-- name: Template airflow.cfg file
-  template:
-    src: airflow.cfg.j2
-    dest: "{{ airflow_install_dir }}/airflow.cfg"
