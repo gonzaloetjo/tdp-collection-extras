@@ -3,14 +3,15 @@
   depends_on: []
 
 - name: airflow_config
-  depends_on: airflow_install
+  noop: yes
+  depends_on: 
+      - airflow_install
 
 - name: airflow_webserver_install
   depends_on:
     - airflow_install
     - airflow_config
     
-
 - name: airflow_scheduler_install
   depends_on:
     - airflow_install
@@ -46,27 +47,25 @@
     - airflow_webserver_config
     - airflow_scheduler_config
 
-# - name: airflow_init
-#   noop: yes
-#   depends_on:
-#     - airflow_webserver_install
-#     - airflow_kerberos_install
-#     - airflow_ssl-tls_install
+- name: airflow_init
+  noop: yes
+  depends_on:
+    - airflow_install
+    - airflow_webserver_install
+    - airflow_scheduler_install
+    - airflow_config
+    - airflow_webserver_config
+    - airflow_scheduler_config
+    - airflow_executor_config
 
-# - name: airflow_config
-#   noop: yes
-#   depends_on:
-#     - airflow_install
-#     - airflow_webserver_config
-
-# - name: airflow_start
-#   noop: yes
-#   depends_on:
-#     - airflow_config
-#     - airflow_webserver_start
-
-# - name: airflow_init
-#   noop: yes
-#   depends_on:
-#     - airflow_start
-#     - airflow_webserver_init
+- name: airflow_start
+  noop: yes
+  depends_on:
+    - airflow_install
+    - airflow_webserver_install
+    - airflow_scheduler_install
+    - airflow_config
+    - airflow_webserver_config
+    - airflow_scheduler_config
+    - airflow_executor_config
+    - airflow_init
