@@ -55,11 +55,11 @@
     src: constraints-3.6.txt.j2
     dest: /tmp/constraints-3.6.txt
 
-- name: Pip install psycopg2 
-  pip:
-    name: "psycopg2-binary"
-    executable: pip3
-    extra_args: --constraint /tmp/constraints-3.6.txt
+# - name: Pip install psycopg2 
+#   pip:
+#     name: "psycopg2-binary"
+#     executable: pip3
+#     extra_args: --constraint /tmp/constraints-3.6.txt
 
 - name: Pip install airflow 
   pip:
@@ -67,17 +67,17 @@
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
 
-- name: Pip install celery 
-  pip:
-    name: "celery"
-    executable: pip3
-    extra_args: --constraint /tmp/constraints-3.6.txt
+# - name: Pip install celery 
+#   pip:
+#     name: "celery"
+#     executable: pip3
+#     extra_args: --constraint /tmp/constraints-3.6.txt
 
-- name: Pip install redis
-  pip:
-    name: "redis"
-    executable: pip3
-    extra_args: --constraint /tmp/constraints-3.6.txt
+# - name: Pip install redis
+#   pip:
+#     name: "redis"
+#     executable: pip3
+#     extra_args: --constraint /tmp/constraints-3.6.txt
 
 - name: Template airflow.cfg file
   template:

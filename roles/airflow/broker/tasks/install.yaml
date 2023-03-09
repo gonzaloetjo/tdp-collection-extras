@@ -1,0 +1,17 @@
+---
+- name: Ensure common airflow installation tasks are performed
+  import_role:
+    name: tosit.tdp_extra.airflow.common
+    tasks_from: install
+
+- name: Install Redis
+  yum:
+    name: redis
+    state: present
+
+# - name: Start Redis service
+#   systemd:
+#     name: redis
+#     state: started
+#     enabled: yes
+

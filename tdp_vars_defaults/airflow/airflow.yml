@@ -58,3 +58,6 @@ ca_certificate_file: "{{ airflow_certs_folder }}/{{ certificates_ca_filename }}.
 
 ssl_certificate: "{{ airflow_public_key }}"
 ssl_private_key: "{{ airflow_private_key }}"
+
+# Redis configuration
+redis_bind_address: 0.0.0.0

@@ -4,9 +4,8 @@
     name: tosit.tdp_extra.airflow.common
     tasks_from: install
 
-- name: Pip install flower 
+- name: Pip install celery 
   pip:
-    name: "flower"
+    name: "celery"
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
-
