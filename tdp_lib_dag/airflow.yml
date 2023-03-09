@@ -2,11 +2,16 @@
 - name: airflow_install
   depends_on: []
 
+- name: airflow_ssl-tls_install
+  depends_on:
+    - airflow_install
+
 - name: airflow_config
   noop: yes
   depends_on: 
       - airflow_install
-
+      - airflow_ssl-tls_install
+    
 - name: airflow_webserver_install
   depends_on:
     - airflow_install
