@@ -43,7 +43,7 @@ airflow_log_dir: /var/log/airflow
 # Airflow config
 airflow_executor: CeleryExecutor
 airflow_result_backend: "db+postgresql://{{ airflow_db_user }}:{{ airflow_db_pass }}@{{ airflow_db_host }}:{{ airflow_db_port }}/{{ airflow_db_name }}"
-airflow_broker_url: "redis://worker-01:6379/0"
+airflow_broker_url: "redis://edge-01:6379/0"
 
 #SSL configuration
 certificates_path: /etc/ssl/certs

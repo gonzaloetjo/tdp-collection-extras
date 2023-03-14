@@ -9,6 +9,12 @@
     name: redis
     state: present
 
+- name: Pip install redis
+  pip:
+    name: "redis"
+    executable: pip3
+    extra_args: --constraint /tmp/constraints-3.6.txt
+
 # - name: Start Redis service
 #   systemd:
 #     name: redis

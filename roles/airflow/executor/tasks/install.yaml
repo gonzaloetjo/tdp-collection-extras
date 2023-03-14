@@ -9,3 +9,15 @@
     name: "celery"
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
+
+- name: Pip install redis #apparently needed not sure why
+  pip:
+    name: "psycopg2"
+    executable: pip3
+    extra_args: --constraint /tmp/constraints-3.6.txt
+
+- name: Pip install redis #apparently needed not sure why
+  pip:
+    name: "redis"
+    executable: pip3
+    extra_args: --constraint /tmp/constraints-3.6.txt
