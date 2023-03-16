@@ -9,3 +9,4 @@
     name: "psycopg2-binary"
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
+

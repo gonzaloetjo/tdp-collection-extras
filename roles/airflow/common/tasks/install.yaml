@@ -61,9 +61,24 @@
 #     executable: pip3
 #     extra_args: --constraint /tmp/constraints-3.6.txt
 
-- name: Pip install airflow 
+- name: Pip install airflow[kerberos]
   pip:
-    name: "apache-airflow=={{ airflow_version }}"
+    name: "apache-airflow[kerberos]=={{ airflow_version }}"
+    executable: pip3
+    extra_args: --constraint /tmp/constraints-3.6.txt
+
+- name: Install packages
+  yum:
+    name:
+      - gcc-c++
+      - python-devel.x86_64
+      - cyrus-sasl-devel.x86_64
+      - krb5-devel
+    state: present
+
+- name: Pip install apache-hive provider
+  pip:
+    name: "apache-airflow-providers-apache-hive"
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
 
@@ -83,3 +98,20 @@
   template:
     src: airflow.cfg.j2
     dest: "{{ airflow_install_dir }}/airflow.cfg"
+
+# Dags: move this to a separate task later
+- name: Create dag directory in /opt/tdp/airflow/airflow
+  ansible.builtin.file:
+    path: "{{ airflow_install_dir }}/dags"
+    state: directory
+    mode: '0755'
+    owner: airflow
+    group: airflow
+
+- name: Template the hive_dag.py.j2 file inside the dag directory
+  ansible.builtin.template:
+    src: hive_dag.py.j2
+    dest: "{{ airflow_install_dir }}/dags/hive_dag.py"
+    owner: airflow
+    group: airflow
+    mode: '0644'
