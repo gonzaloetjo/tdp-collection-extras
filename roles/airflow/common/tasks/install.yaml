@@ -55,6 +55,22 @@
     src: constraints-3.6.txt.j2
     dest: /tmp/constraints-3.6.txt
 
+- name: Create configuration directory
+  file:
+    path: "{{ airflow_root_conf_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "755"
+
+- name: Create certificates directory
+  file:
+    path: "{{ airflow_certs_folder }}"
+    state: directory
+    group: root
+    owner: root
+    mode: "0755"
+
 # - name: Pip install psycopg2 
 #   pip:
 #     name: "psycopg2-binary"
