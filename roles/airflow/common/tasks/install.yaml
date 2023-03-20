@@ -76,21 +76,32 @@
 #     name: "psycopg2-binary"
 #     executable: pip3
 #     extra_args: --constraint /tmp/constraints-3.6.txt
+- name: Install packages
+  yum:
+    name:
+      - gcc-c++
+      - python-devel.x86_64
+      - python3-devel.x86_64
+      - cyrus-sasl-devel.x86_64
+      - krb5-devel
+    state: present
+
+# - name: Install packages
+#   pip:
+#     name:
+#       - pyspnego[kerberos]
+#       - gssapi>=1.5.0
+#       - krb5>=0.3.0
+#     executable: pip3
+#     state: present
 
 - name: Pip install airflow[kerberos]
   pip:
     name: "apache-airflow[kerberos]=={{ airflow_version }}"
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
-
-- name: Install packages
-  yum:
-    name:
-      - gcc-c++
-      - python-devel.x86_64
-      - cyrus-sasl-devel.x86_64
-      - krb5-devel
     state: present
+
 
 - name: Pip install apache-hive provider
   pip:
