@@ -61,3 +61,17 @@ ssl_private_key: "{{ airflow_private_key }}"
 
 # Redis configuration
 redis_bind_address: 0.0.0.0
+
+# Hive Connector
+hive_extra_config: >-
+  {
+    "use_beeline": "true",
+    "auth": "kerberos",
+    "principal": "hive/_HOST@REALM.TDP",
+    "transportMode": "http",
+    "httpPath": "cliservice",
+    "ssl": "true",
+    "sslTrustStore": "/etc/ssl/certs/truststore.jks",
+    "trustStorePassword": "Truststore123!",
+    "proxy_user": "tdp_user"
+  }

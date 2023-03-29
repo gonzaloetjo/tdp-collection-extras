@@ -1,0 +1,45 @@
+from airflow import DAG
+from airflow.providers.apache.hive.operators.hive import HiveOperator
+from airflow.utils.dates import days_ago
+
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'start_date': days_ago(1),
+    'queue': 'edge-01.tdp',  # Move the 'queue' parameter here
+}
+
+dag = DAG(
+    'hive_insert_dag',
+    default_args=default_args,
+    description='A simple Hive DAG',
+    schedule_interval=None,
+)
+
+create_database = HiveOperator(
+    task_id='create_database',
+    hql='CREATE DATABASE IF NOT EXISTS my_database',
+    hive_cli_conn_id='hiveserver2_tdp',
+    dag=dag,
+)
+
+create_table = HiveOperator(
+    task_id='create_table',
+    hql=f'''CREATE TABLE IF NOT EXISTS my_database.my_table (
+            id INT,
+            name STRING
+        )
+        STORED AS PARQUET
+    ''',
+    hive_cli_conn_id='hiveserver2_tdp',
+    dag=dag,
+)
+
+insert_data = HiveOperator(
+    task_id='insert_data',
+    hql=f'''INSERT INTO my_database.my_table (id, name) VALUES (1, 'John Doe')''',
+    hive_cli_conn_id='hiveserver2_tdp',
+    dag=dag,
+)
+
+create_database >> create_table >> insert_data

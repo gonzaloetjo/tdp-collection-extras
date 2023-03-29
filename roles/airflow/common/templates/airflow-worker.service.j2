@@ -26,7 +26,7 @@ Environment="AIRFLOW_HOME={{ airflow_install_dir }}"
 User={{ airflow_user }}
 Group={{ airflow_group }}
 Type=simple
-ExecStart=/usr/local/bin/airflow celery worker --pid {{ airflow_pid_dir }}/worker.pid
+ExecStart=/usr/local/bin/airflow celery worker --pid {{ airflow_pid_dir }}/worker.pid -q {{ ansible_fqdn }}
 Restart=on-failure
 RestartSec=10s
 

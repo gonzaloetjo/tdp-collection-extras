@@ -9,3 +9,13 @@
     name: "psycopg2-binary"
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
+
+- name: Add Airflow connection
+  ansible.builtin.command:
+    cmd: "/usr/local/bin/airflow connections add hiveserver2_tdp --conn-type hive_cli --conn-host master-03.tdp --conn-schema default --conn-port 10001 --conn-extra '{{ hive_extra_config }}'"
+  become: yes
+  become_user: "{{ airflow_user }}"
+  environment:
+    AIRFLOW_HOME: "/opt/tdp/airflow/airflow"
+    PATH: "{{ ansible_env.PATH }}:/usr/local/bin"
+  ignore_errors: true

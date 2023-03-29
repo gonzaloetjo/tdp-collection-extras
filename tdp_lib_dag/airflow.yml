@@ -6,11 +6,17 @@
   depends_on:
     - airflow_install
 
+- name: airflow_kerberos_install
+  depends_on:
+    - airflow_install
+    - airflow_ssl-tls_install
+
 - name: airflow_config
   noop: yes
   depends_on: 
       - airflow_install
       - airflow_ssl-tls_install
+      - airflow_kerberos_install
     
 - name: airflow_webserver_install
   depends_on:

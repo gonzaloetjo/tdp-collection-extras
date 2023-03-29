@@ -143,10 +143,29 @@
     group: airflow
     mode: '0644'
 
-- name: Template the hive_dag.py.j2 file inside the dag directory
+- name: Template the hive_server_dag.py.j2 file inside the dag directory
   ansible.builtin.template:
     src: hive_server_dag.py.j2
     dest: "{{ airflow_install_dir }}/dags/hive_server_dag.py"
     owner: airflow
     group: airflow
     mode: '0644'
+
+- name: Template the hive_insert_dag.py.j2 file inside the dag directory
+  ansible.builtin.template:
+    src: hive_insert_dag.py.j2
+    dest: "{{ airflow_install_dir }}/dags/hive_insert_dag.py"
+    owner: airflow
+    group: airflow
+    mode: '0644'
+
+- name: Update .bashrc for Airflow user
+  become: yes
+  become_user: "{{ airflow_user }}"
+  blockinfile:
+    path: "~/.bashrc"
+    block: |
+      # Set environment variables for Airflow
+      export AIRFLOW_HOME={{ airflow_install_dir }}
+      export PATH=$PATH:/usr/local/bin
+

@@ -1,54 +1,72 @@
 from airflow import DAG
-from airflow.operators.hive_operator import HiveOperator
-from airflow.contrib.operators.hive_operator import HiveServer2Operator
-from airflow.contrib.hooks.hive_server2_hook import HiveServer2Hook
-from airflow.hooks.base_hook import BaseHook
+from airflow.providers.apache.hive.operators.hive import HiveOperator
+from airflow.providers.apache.hive.hooks.hive import HiveServer2Hook
+from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
+from datetime import datetime, timedelta
+import subprocess
 
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': days_ago(1),
+    'queue': 'edge-01.tdp',  # Move the 'queue' parameter here
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
 }
 
 dag = DAG(
-    'example_hive_operator',
+    'hive_server_dag',
     default_args=default_args,
     description='A simple tutorial DAG',
     schedule_interval=None,
 )
 
-kerberos_ticket = KerberosTicket(cache='/tmp/krb5cc_123')
+create_database = HiveOperator(
+    task_id='create_database',
+    hql='DROP DATABASE IF EXISTS tdp_user_db CASCADE; CREATE DATABASE IF NOT EXISTS tdp_user_db LOCATION "/warehouse/tablespace/external/hive";',
+    hive_cli_conn_id='hiveserver2_tdp',
+    dag=dag,
+)
 
-# Set the necessary Kerberos authentication settings
-kerberos_conn_id = 'kerberos_default'
-kerberos_hook = KerberosHook(krb5_conn_id=kerberos_conn_id)
+create_table = HiveOperator(
+    task_id='create_table',
+    hql='''CREATE EXTERNAL TABLE tdp_user_db.taxi_trip_ext (
+        VendorID INT,
+        lpep_pickup_datetime STRING,
+        lpep_dropoff_datetime STRING,
+        store_and_fwd_flag STRING,
+        RatecodeID DOUBLE,
+        PULocationID INT,
+        DOLocationID INT,
+        passenger_count DOUBLE,
+        trip_distance DOUBLE,
+        fare_amount DOUBLE,
+        extra DOUBLE,
+        mta_tax DOUBLE,
+        tip_amount DOUBLE,
+        tolls_amount DOUBLE,
+        ehail_fee STRING,
+        improvement_surcharge DOUBLE,
+        total_amount DOUBLE,
+        payment_type DOUBLE,
+        trip_type DOUBLE,
+        congestion_surcharge DOUBLE)
+    ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ","
+    STORED AS PARQUET
+    LOCATION "/home/tdp_user/data/nyc_green_taxi_trip";''',
+    hive_cli_conn_id='hiveserver2_tdp',
+    dag=dag,
+)
 
-# Set the HiveServer2 connection settings
-hiveserver2_conn_id = 'hiveserver2_default'
-hiveserver2_hook = HiveServer2Hook(hiveserver2_conn_id)
-
-# Beeline command to connect to Hive through ZooKeeper
-beeline_command = "/opt/tdp/hive/bin/beeline -u '{0}' --silent=true --showHeader=false --outputformat=csv2 --showWarnings=false --force=true"
-
-# Example HiveOperator task
 hive_query = "SELECT * FROM tdp_user_db.taxi_trip_ext LIMIT 3"
 hive_operator = HiveOperator(
     task_id='example_hive_operator',
     hql=hive_query,
-    hive_cli_conn_id=hiveserver2_conn_id,
+    hive_cli_conn_id='hiveserver2_tdp',
     dag=dag,
 )
 
-# Example HiveServer2Operator task
-hiveserver2_query = "SELECT * FROM tdp_user_db.taxi_trip_ext LIMIT 3"
-hiveserver2_operator = HiveServer2Operator(
-    task_id='example_hiveserver2_operator',
-    hql=hiveserver2_query,
-    hive_cli_conn_id=hiveserver2_conn_id,
-    kerberos_ticket=kerberos_ticket,
-    kerberos_service_name='hive',
-    dag=dag,
-)
-
-hive_operator >> hiveserver2_operator
+create_database >> create_table >> hive_operator

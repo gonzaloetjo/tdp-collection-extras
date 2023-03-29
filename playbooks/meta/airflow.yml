@@ -4,6 +4,7 @@
 ---
 - import_playbook: ../airflow_install.yml
 - import_playbook: ../airflow_ssl-tls_install.yml
+- import_playbook: ../airflow_kerberos_install.yml
 - import_playbook: ../airflow_webserver_install.yml
 - import_playbook: ../airflow_scheduler_install.yml
 - import_playbook: ../airflow_executor_install.yml
