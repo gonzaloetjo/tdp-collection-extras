@@ -27,6 +27,7 @@ create_database = HiveOperator(
     task_id='create_database',
     hql='DROP DATABASE IF EXISTS tdp_user_db CASCADE; CREATE DATABASE IF NOT EXISTS tdp_user_db LOCATION "/warehouse/tablespace/external/hive";',
     hive_cli_conn_id='hiveserver2_tdp',
+    run_as_owner='true',
     dag=dag,
 )
 
@@ -56,8 +57,9 @@ create_table = HiveOperator(
     ROW FORMAT DELIMITED
     FIELDS TERMINATED BY ","
     STORED AS PARQUET
-    LOCATION "/home/tdp_user/data/nyc_green_taxi_trip";''',
+    LOCATION "data/nyc_green_taxi_trip";''',
     hive_cli_conn_id='hiveserver2_tdp',
+    run_as_owner='true',
     dag=dag,
 )
 
@@ -66,6 +68,7 @@ hive_operator = HiveOperator(
     task_id='example_hive_operator',
     hql=hive_query,
     hive_cli_conn_id='hiveserver2_tdp',
+    run_as_owner='true',
     dag=dag,
 )
 

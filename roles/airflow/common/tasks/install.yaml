@@ -1,12 +1,16 @@
 ---
-- name: Add Airflow group
-  group:
-    name: "{{ airflow_group }}"
+- name: Ensure hadoop group exists
+  include_role:
+    name: tosit.tdp.utils.group
+  vars:
+    group: "{{ hadoop_group }}"
 
-- name: Add Airflow users
-  user:
-    name: "{{ airflow_user }}"
-    group: "{{ airflow_group }}"
+- name: Ensure airflow user exists
+  include_role:
+    name: tosit.tdp.utils.user
+  vars:
+    user: "{{ airflow_user }}"
+    group: "{{ hadoop_group }}"
 
 - name: Ensures {{ airflow_root_dir }} exists
   file:
@@ -28,16 +32,16 @@
   file:
     path: '{{ airflow_log_dir }}'
     state: directory
-    group: '{{ airflow_group }}'
+    group: '{{ hadoop_group }}'
     owner: '{{ airflow_user }}'
 
 - name: Create directory for pid
   file:
     path: '{{ airflow_pid_dir }}'
     state: directory
-    group: '{{ airflow_group }}'
-    owner: '{{ airflow_user }}'
-    mode: "750"
+    group: root
+    owner: root
+    mode: "755"
 
 - name: Template airflow tmpfiles.d
   template:
@@ -109,6 +113,12 @@
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
 
+- name: Pip install apache-spark provider
+  pip:
+    name: "apache-airflow-providers-apache-spark"
+    executable: pip3
+    extra_args: --constraint /tmp/constraints-3.6.txt
+
 # - name: Pip install celery 
 #   pip:
 #     name: "celery"
@@ -133,22 +143,22 @@
     state: directory
     mode: '0755'
     owner: airflow
-    group: airflow
+    group: hadoop
 
 - name: Template the hive_dag.py.j2 file inside the dag directory
   ansible.builtin.template:
     src: hive_dag.py.j2
     dest: "{{ airflow_install_dir }}/dags/hive_dag.py"
-    owner: airflow
-    group: airflow
     mode: '0644'
+    owner: airflow
+    group: hadoop
 
 - name: Template the hive_server_dag.py.j2 file inside the dag directory
   ansible.builtin.template:
     src: hive_server_dag.py.j2
     dest: "{{ airflow_install_dir }}/dags/hive_server_dag.py"
     owner: airflow
-    group: airflow
+    group: hadoop
     mode: '0644'
 
 - name: Template the hive_insert_dag.py.j2 file inside the dag directory
@@ -156,7 +166,7 @@
     src: hive_insert_dag.py.j2
     dest: "{{ airflow_install_dir }}/dags/hive_insert_dag.py"
     owner: airflow
-    group: airflow
+    group: hadoop
     mode: '0644'
 
 - name: Update .bashrc for Airflow user

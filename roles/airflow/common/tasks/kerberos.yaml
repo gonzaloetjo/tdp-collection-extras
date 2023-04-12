@@ -14,35 +14,35 @@
         group: "{{ hadoop_group }}"
         mode: "600"
 
-    - import_role:
-        name: tosit.tdp.utils.kerberos
-        tasks_from: create_principal_keytab
-      vars:
-        principal: "HTTP/{{ ansible_fqdn }}"
-        keytab: "spnego.service.keytab"
-        user: "root"
-        group: "{{ hadoop_group }}"
-        mode: "640"
-  when: krb_create_principals_keytabs
+#     - import_role:
+#         name: tosit.tdp.utils.kerberos
+#         tasks_from: create_principal_keytab
+#       vars:
+#         principal: "HTTP/{{ ansible_fqdn }}"
+#         keytab: "spnego.service.keytab"
+#         user: "root"
+#         group: "{{ hadoop_group }}"
+#         mode: "640"
+#   when: krb_create_principals_keytabs
 
-- block:
-    - import_role:
-        name: tosit.tdp.utils.kerberos
-        tasks_from: check_secure_keytab
-      vars:
-        principal: "airflow/{{ ansible_fqdn }}"
-        keytab: "airflow.service.keytab"
-        user: "{{ airflow_user }}"
-        group: "{{ hadoop_group }}"
-        mode: "600"
+# - block:
+#     - import_role:
+#         name: tosit.tdp.utils.kerberos
+#         tasks_from: check_secure_keytab
+#       vars:
+#         principal: "airflow/{{ ansible_fqdn }}"
+#         keytab: "airflow.service.keytab"
+#         user: "{{ airflow_user }}"
+#         group: "{{ hadoop_group }}"
+#         mode: "600"
 
-    - import_role:
-        name: tosit.tdp.utils.kerberos
-        tasks_from: check_secure_keytab
-      vars:
-        principal: "HTTP/{{ ansible_fqdn }}"
-        keytab: "spnego.service.keytab"
-        user: "root"
-        group: "{{ hadoop_group }}"
-        mode: "640"
-  when: not krb_create_principals_keytabs
+#     - import_role:
+#         name: tosit.tdp.utils.kerberos
+#         tasks_from: check_secure_keytab
+#       vars:
+#         principal: "HTTP/{{ ansible_fqdn }}"
+#         keytab: "spnego.service.keytab"
+#         user: "root"
+#         group: "{{ hadoop_group }}"
+#         mode: "640"
+#   when: not krb_create_principals_keytabs

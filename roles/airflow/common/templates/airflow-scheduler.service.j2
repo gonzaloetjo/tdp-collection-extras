@@ -24,7 +24,7 @@ Wants=network-online.target
 [Service]
 Environment="AIRFLOW_HOME={{ airflow_install_dir }}"
 User={{ airflow_user }}
-Group={{ airflow_group }}
+Group={{ hadoop_group }}
 Type=simple
 ExecStart=/usr/local/bin/airflow scheduler --pid {{ airflow_pid_dir }}/scheduler.pid
 Restart=always

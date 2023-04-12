@@ -12,9 +12,7 @@
 
 - name: Add Airflow connection
   ansible.builtin.command:
-    cmd: "/usr/local/bin/airflow connections add hiveserver2_tdp --conn-type hive_cli --conn-host master-03.tdp --conn-schema default --conn-port 10001 --conn-extra '{{ hive_extra_config }}'"
-  become: yes
-  become_user: "{{ airflow_user }}"
+    cmd: "/usr/local/bin/airflow connections add hiveserver2_tdp --conn-type hive_cli --conn-host master-03.tdp --conn-schema default --conn-port 10001 --conn-login tdp_user --conn-password tdp_user123 --conn-extra '{{ hive_extra_config }}'"
   environment:
     AIRFLOW_HOME: "/opt/tdp/airflow/airflow"
     PATH: "{{ ansible_env.PATH }}:/usr/local/bin"

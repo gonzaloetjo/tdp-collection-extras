@@ -63,15 +63,22 @@ ssl_private_key: "{{ airflow_private_key }}"
 redis_bind_address: 0.0.0.0
 
 # Hive Connector
+# hive_extra_config: >-
+#   {
+#     "auth": "KERBEROS",
+#     "kerberos_service_name": "hive",
+#     "principal": "hive/_HOST@REALM.TDP",
+#     "transport_mode": "http",
+#     "http_path": "cliservice",
+#     "use_ssl": "true",
+#     "ssl_trust_store": "/etc/ssl/certs/truststore.jks",
+#     "trust_store_password": "Truststore123!"
+#   }
 hive_extra_config: >-
   {
-    "use_beeline": "true",
-    "auth": "kerberos",
-    "principal": "hive/_HOST@REALM.TDP",
-    "transportMode": "http",
-    "httpPath": "cliservice",
-    "ssl": "true",
-    "sslTrustStore": "/etc/ssl/certs/truststore.jks",
-    "trustStorePassword": "Truststore123!",
-    "proxy_user": "tdp_user"
+    "use_beeline": "true", "proxy_user": "tdp_user", "principal": "hive/master-03.tdp@REALM.TDP;transportMode=http;httpPath=cliservice;ssl=true;sslTrustStore=/etc/ssl/certs/truststore.jks;trustStorePassword=Truststore123!"
   }
+
+# Kerberos
+realm: TDP.LOCAL
+krb_create_principals_keytabs: true

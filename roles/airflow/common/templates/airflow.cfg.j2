@@ -258,12 +258,12 @@ encrypt_s3_logs = False
 # Logging level.
 #
 # Supported values: ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO``, ``DEBUG``.
-logging_level = INFO
+logging_level = DEBUG
 
 # Logging level for Flask-appbuilder UI.
 #
 # Supported values: ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO``, ``DEBUG``.
-fab_logging_level = WARNING
+fab_logging_level = DEBUG
 
 # Logging class
 # Specify the class that will specify the logging configuration
@@ -357,7 +357,7 @@ endpoint_url = http://localhost:8080
 [debug]
 # Used only with ``DebugExecutor``. If set to ``True`` DAG will fail with first
 # failed task. Helpful for debugging purposes.
-fail_fast = False
+fail_fast = True
 
 [api]
 # Enables the deprecated experimental API. Please note that these APIs do not have access control.

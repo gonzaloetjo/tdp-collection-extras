@@ -5,9 +5,9 @@
   file:
     path: "{{ item.path }}"
     owner: airflow
-    group: airflow
+    group: hadoop
     mode: "{{ item.mode }}"
   with_items:
     - { path: '/var/log/airflow', mode: '755' }
-    - { path: '/etc/ssl/certs/{{ ansible_fqdn }}.key', mode: '755' }
-    - { path: '/etc/ssl/certs/{{ ansible_fqdn }}.pem', mode: '755' }
+    # - { path: '/etc/ssl/certs/{{ ansible_fqdn }}.key', mode: '755' }
+    # - { path: '/etc/ssl/certs/{{ ansible_fqdn }}.pem', mode: '755' }

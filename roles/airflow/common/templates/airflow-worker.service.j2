@@ -24,9 +24,10 @@ Wants=network-online.target
 [Service]
 Environment="AIRFLOW_HOME={{ airflow_install_dir }}"
 User={{ airflow_user }}
-Group={{ airflow_group }}
+Group={{ hadoop_group }}
 Type=simple
-ExecStart=/usr/local/bin/airflow celery worker --pid {{ airflow_pid_dir }}/worker.pid -q {{ ansible_fqdn }}
+ExecStart=/usr/local/bin/airflow celery worker --pid {{ airflow_pid_dir }}/worker.pid -q {{ ansible_fqdn }} --log-file {{ airflow_log_dir }}/celery_worker.log
+Restart=on-failure
 Restart=on-failure
 RestartSec=10s
 

@@ -1,0 +1,76 @@
+# Connection without proxy_user, kerb as airflow, master3, owner true
+[2023-04-06, 16:28:39 UTC] {base.py:79} INFO - 
+Using connection to: id: hiveserver2_tdp. Host: master-03.tdp, Port: 10001, Schema: default, 
+Login: , Password: ***, extra: {'use_beeline': 'true', 
+'principal': 'hive/master-03.tdp@REALM.TDP;transportMode=http;httpPath=cliservice;ssl=true;
+sslTrustStore=/etc/ssl/certs/truststore.jks;trustStorePassword=Truststore123!'}
+
+[2023-04-06, 16:28:52 UTC] {hive.py:254} INFO - 
+Error: Could not open client transport with JDBC Uri: 
+jdbc:hive2://master-03.tdp:10001/default;principal=hive/master-03.tdp@REALM.TDP;
+transportMode=http;httpPath=cliservice;ssl=true;sslTrustStore=/etc/ssl/certs/truststore.jks;
+trustStorePassword=Truststore123!;: 
+Failed to open new session: java.lang.IllegalArgumentException: 
+Cannot modify ***.ctx.task_id at runtime. 
+It is not in list of params that are allowed to be modified at runtime (state=08S01,code=0)
+
+# Connection without proxy_user, kerb as airflow, master3, owner false
+[2023-04-07, 10:17:59 UTC] {base.py:79} INFO - 
+Using connection to: id: hiveserver2_tdp. Host: master-03.tdp, Port: 10001, Schema: default, 
+Login: , Password: ***, extra: {'use_beeline': 'true', 
+'principal': 'hive/master-03.tdp@REALM.TDP;transportMode=http;httpPath=cliservice;ssl=true;
+sslTrustStore=/etc/ssl/certs/truststore.jks;trustStorePassword=Truststore123!'}
+
+[2023-04-07, 10:18:09 UTC] {hive.py:254} INFO - 
+Error: Could not open client transport with JDBC Uri: 
+jdbc:hive2://master-03.tdp:10001/default;principal=hive/master-03.tdp@REALM.TDP;
+transportMode=http;httpPath=cliservice;ssl=true;sslTrustStore=/etc/ssl/certs/truststore.jks;
+trustStorePassword=Truststore123!;: 
+Failed to open new session: java.lang.IllegalArgumentException:
+Cannot modify ***.ctx.task_id at runtime. 
+It is not in list of params that are allowed to be modified at runtime (state=08S01,code=0)
+
+
+[2023-04-07, 10:23:12 UTC] {hive.py:254} INFO - 
+Error: Could not open client transport with JDBC Uri: 
+jdbc:hive2://master-03.tdp:10001/default;principal=hive/master-03.tdp@REALM.TDP;
+transportMode=http;httpPath=cliservice;ssl=true;sslTrustStore=/etc/ssl/certs/truststore.jks;
+trustStorePassword=Truststore123!;: 
+Failed to open new session: java.lang.IllegalArgumentException:
+Cannot modify ***.ctx.task_id at runtime. 
+It is not in list of params that are allowed to be modified at runtime (state=08S01,code=0)
+
+
+# Connection WITH proxy_user, kerb as airflow, master3, owner false
+[2023-04-07, 10:25:27 UTC] {base.py:79} INFO - 
+Using connection to: id: hiveserver2_tdp. Host: master-03.tdp, Port: 10001, Schema: default, 
+Login: , Password: ***, extra: {'use_beeline': 'true', 'proxy_user': 'tdp_user', 
+'principal': 'hive/master-03.tdp@REALM.TDP;transportMode=http;httpPath=cliservice;ssl=true;
+sslTrustStore=/etc/ssl/certs/truststore.jks;trustStorePassword=Truststore123!'}
+
+[2023-04-07, 10:25:35 UTC] {hive.py:254} INFO - 
+Error: Could not open client transport with JDBC Uri: 
+jdbc:hive2://master-03.tdp:10001/default;principal=hive/master-03.tdp@REALM.TDP;
+transportMode=http;httpPath=cliservice;ssl=true;sslTrustStore=/etc/ssl/certs/truststore.jks;
+trustStorePassword=Truststore123!;
+hive.server2.proxy.user=tdp_user: 
+Failed to open new session: java.lang.IllegalArgumentException: 
+Cannot modify ***.ctx.task_id at runtime. 
+It is not in list of params that are allowed to be modified at runtime (state=08S01,code=0)
+
+
+[2023-04-07, 10:38:54 UTC] {base.py:79} INFO - 
+Using connection to: id: hiveserver2_tdp. Host: master-03.tdp, Port: 10001, Schema: default, 
+Login: , Password: ***, extra: {'use_beeline': 'true', 'proxy_user': 'tdp_user', 
+'principal': 'hive/master-03.tdp@REALM.TDP;transportMode=http;httpPath=cliservice;ssl=true;
+sslTrustStore=/etc/ssl/certs/truststore.jks;trustStorePassword=Truststore123!'}
+
+[2023-04-07, 10:39:02 UTC] {hive.py:254} INFO - 
+Error: Could not open client transport with JDBC Uri: 
+jdbc:hive2://master-03.tdp:10001/default;principal=hive/master-03.tdp@REALM.TDP;
+transportMode=http;httpPath=cliservice;ssl=true;sslTrustStore=/etc/ssl/certs/truststore.jks;
+trustStorePassword=Truststore123!;
+hive.server2.proxy.user=tdp_user: 
+Failed to open new session: java.lang.IllegalArgumentException: 
+Cannot modify ***.ctx.task_id at runtime. 
+It is not in list of params that are allowed to be modified at runtime (state=08S01,code=0)
