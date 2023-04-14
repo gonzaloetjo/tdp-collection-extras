@@ -1,0 +1,51 @@
+from datetime import datetime
+from airflow.utils.dates import days_ago
+from airflow.models import DAG
+from airflow.providers.apache.spark.operators.spark_jdbc import SparkJDBCOperator
+from airflow.providers.apache.spark.operators.spark_sql import SparkSqlOperator
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'start_date': days_ago(1),
+    'queue': 'edge-01.tdp',  # Add the 'queue' parameter here
+}
+
+with DAG(
+    dag_id='spark_dag',
+    schedule_interval=None,
+    start_date=datetime(2021, 1, 1),
+    catchup=False,
+    tags=['example'],
+    default_args=default_args,  # Pass the default_args to the DAG
+) as dag:
+    submit_job = SparkSubmitOperator(
+        task_id="submit_job",
+        application="/opt/tdp/spark/examples/src/main/python/pi.py",
+        conn_id="spark_default",
+        dag=dag
+    )
+
+    jdbc_to_spark_job = SparkJDBCOperator(
+        cmd_type='jdbc_to_spark',
+        jdbc_table="foo",
+        spark_jars="/opt/tdp/spark/jars/postgresql-42.2.12.jar",
+        jdbc_driver="org.postgresql.Driver",
+        metastore_table="bar",
+        save_mode="overwrite",
+        save_format="JSON",
+        task_id="jdbc_to_spark_job",
+    )
+
+    spark_to_jdbc_job = SparkJDBCOperator(
+        cmd_type='spark_to_jdbc',
+        jdbc_table="foo",
+        spark_jars="/opt/tdp/spark/jars/postgresql-42.2.12.jar",
+        jdbc_driver="org.postgresql.Driver",
+        metastore_table="bar",
+        save_mode="append",
+        task_id="spark_to_jdbc_job",
+    )
+
+    sql_job = SparkSqlOperator(sql="SELECT * FROM bar", master="local", task_id="sql_job")
