@@ -1,0 +1,57 @@
+---
+- name: Airflow Database Init
+  shell: /usr/local/bin/airflow db init
+  environment:
+    AIRFLOW_HOME: "{{ airflow_install_dir }}"
+
+- name: Admin and users
+  shell: |
+    /usr/local/bin/airflow users create \
+      --username {{ item.username }} \
+      --password {{ item.password }} \
+      --role {{ item.role }} \
+      --firstname {{ item.firstname }} \
+      --lastname {{ item.lastname }} \
+      --email {{ item.email }}
+  with_items: "{{ airflow_admin + (airflow_users if airflow_users is defined else []) }}"
+  environment:
+    AIRFLOW_HOME: "{{ airflow_install_dir }}"
+
+- name: Template webserver_config.py file
+  template:
+    src: webserver_config.py.j2
+    dest: "{{ airflow_install_dir }}/webserver_config.py"
+
+- name: Template Airflow webserver service file
+  template:
+    src: airflow-webserver.service.j2
+    dest: /usr/lib/systemd/system/airflow-webserver.service
+
+- name: Add Hive connection
+  shell: |
+    /usr/local/bin/airflow connections add hiveserver2_tdp \
+      --conn-type hive_cli \
+      --conn-host master-03.tdp \
+      --conn-schema default \
+      --conn-port 10001 \
+      --conn-login login \
+      --conn-extra '{{ hive_extra_config }}'
+  environment:
+    AIRFLOW_HOME: "{{ airflow_install_dir }}"
+    PATH: "{{ ansible_env.PATH }}:/usr/local/bin"
+  ignore_errors: true
+
+- name: Add Spark connection
+  shell: |
+    /usr/local/bin/airflow connections add spark3_tdp \
+      --conn-type spark \
+      --conn-host yarn
+  environment:
+    AIRFLOW_HOME: "{{ airflow_install_dir }}"
+    PATH: "{{ ansible_env.PATH }}:/usr/local/bin"
+  ignore_errors: true
+
+- name: Template Airflow flower service file
+  template:
+    src: airflow-flower.service.j2
+    dest: /usr/lib/systemd/system/airflow-flower.service

@@ -1,11 +1,11 @@
 ---
-- name: "Config Airflow Executor"
-  hosts: airflow_executor
+- name: "Config Airflow worker"
+  hosts: airflow_worker
   strategy: linear
   tasks:
     - tosit.tdp.resolve: # noqa unnamed-task
-        node_name: airflow_executor
+        node_name: airflow_worker
     - import_role:
-        name: tosit.tdp_extra.airflow.executor
+        name: tosit.tdp_extra.airflow.worker
         tasks_from: config
     - meta: clear_facts # noqa unnamed-task

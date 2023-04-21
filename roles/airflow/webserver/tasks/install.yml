@@ -1,19 +1,11 @@
 ---
-- name: Ensure common airflow installation tasks are performed
-  import_role:
-    name: tosit.tdp_extra.airflow.common
-    tasks_from: install
-    
-- name: Pip install psycopg2 
+# - name: Ensure common airflow installation tasks are performed
+#   import_role:
+#     name: tosit.tdp_extra.airflow.common
+#     tasks_from: install
+
+- name: Pip install flower 
   pip:
-    name: "psycopg2-binary"
+    name: "flower"
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
-
-- name: Add Airflow connection
-  ansible.builtin.command:
-    cmd: "/usr/local/bin/airflow connections add hiveserver2_tdp --conn-type hive_cli --conn-host master-03.tdp --conn-schema default --conn-port 10001 --conn-login tdp_user --conn-password tdp_user123 --conn-extra '{{ hive_extra_config }}'"
-  environment:
-    AIRFLOW_HOME: "/opt/tdp/airflow/airflow"
-    PATH: "{{ ansible_env.PATH }}:/usr/local/bin"
-  ignore_errors: true

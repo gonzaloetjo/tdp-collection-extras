@@ -7,7 +7,39 @@
     owner: airflow
     group: hadoop
     mode: "{{ item.mode }}"
+    recurse: yes
   with_items:
-    - { path: '/var/log/airflow', mode: '755' }
+    - { path: '{{ airflow_root_conf_dir }}', mode: '755' }
+    - { path: '{{ airflow_log_dir }}', mode: '755' }
+    - { path: '{{ airflow_dag_dir }}', mode: '755' }
     # - { path: '/etc/ssl/certs/{{ ansible_fqdn }}.key', mode: '755' }
     # - { path: '/etc/ssl/certs/{{ ansible_fqdn }}.pem', mode: '755' }
+
+- name: Template profile.d
+  template:
+    src: airflow-profile.d.j2
+    dest: "/etc/profile.d/airflow.sh"
+  register: airflow_profile
+
+- name: Reload profile
+  shell: source /etc/profile.d/airflow.sh
+  when: airflow_profile.changed
+
+- name: Airflow environment variables file
+  template:
+    src: airflow-env.j2
+    dest: "{{ airflow_env_file }}"
+    mode: 0644
+    owner: "{{ airflow_user }}"
+    group: "{{ hadoop_group }}"
+
+- name: Airflow kerberos service
+  template:
+    src: airflow-kerberos.service.j2
+    dest: /usr/lib/systemd/system/airflow-kerberos.service
+
+- name: Airflow | Change default beeline
+  become: yes
+  become_user: root
+  shell: mv /usr/local/bin/beeline{,.airflow.bkp}
+  # when: airflow_hive.changed

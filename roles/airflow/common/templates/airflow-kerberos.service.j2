@@ -17,20 +17,19 @@
 # under the License.
 
 [Unit]
-Description=Airflow webserver daemon
-After=network-online.target
-Wants=network-online.target
+Description=Airflow kerberos ticket renewer
+After=network.target postgresql.service mysql.service redis.service rabbitmq-server.service
+Wants=postgresql.service mysql.service redis.service rabbitmq-server.service
 
 [Service]
 RuntimeDirectory=airflow
 EnvironmentFile={{ airflow_env_file }}
-User={{ airflow_user }}
-Group={{ hadoop_group }}
+User=airflow
+Group=hadoop
 Type=simple
-ExecStart=/usr/local/bin/airflow webserver --pid {{ airflow_pid_dir }}/webserver.pid
+ExecStart=/usr/local/bin/airflow kerberos
 Restart=on-failure
 RestartSec=5s
-PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target

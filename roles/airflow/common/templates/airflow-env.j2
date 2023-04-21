@@ -16,21 +16,18 @@
 # specific language governing permissions and limitations
 # under the License.
 
-[Unit]
-Description=Airflow webserver daemon
-After=network-online.target
-Wants=network-online.target
+# This file is the environment file for Airflow. Put this file in /etc/sysconfig/airflow per default
+# configuration of the systemd unit files.
+#
 
-[Service]
-RuntimeDirectory=airflow
-EnvironmentFile={{ airflow_env_file }}
-User={{ airflow_user }}
-Group={{ hadoop_group }}
-Type=simple
-ExecStart=/usr/local/bin/airflow webserver --pid {{ airflow_pid_dir }}/webserver.pid
-Restart=on-failure
-RestartSec=5s
-PrivateTmp=true
+AIRFLOW_CONFIG={{ airflow_install_dir }}/airflow.cfg
+AIRFLOW_HOME={{ airflow_install_dir }}
 
-[Install]
-WantedBy=multi-user.target
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# http_proxy=
+# https_proxy=
+# no_proxy=
+# HTTP_PROXY=
+# HTTPS_PROXY=
+# NO_PROXY=

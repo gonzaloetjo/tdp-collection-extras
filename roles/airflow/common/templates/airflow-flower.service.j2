@@ -22,7 +22,8 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-Environment="AIRFLOW_HOME={{ airflow_install_dir }}"
+RuntimeDirectory=airflow
+EnvironmentFile={{ airflow_env_file }}
 User={{ airflow_user }}
 Group={{ hadoop_group }}
 Type=simple

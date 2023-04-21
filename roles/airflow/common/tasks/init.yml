@@ -1,0 +1,16 @@
+---
+- name: Change ownership and permissions of Airflow logs and SSL keys
+  become: yes
+  become_user: root
+  file:
+    path: "{{ item.path }}"
+    owner: airflow
+    group: hadoop
+    mode: "{{ item.mode }}"
+    recurse: yes
+  with_items:
+    - { path: '{{ airflow_root_conf_dir }}', mode: '755' }
+    - { path: '{{ airflow_log_dir }}', mode: '755' }
+    - { path: '{{ airflow_dag_dir }}', mode: '755' }
+    # - { path: '/etc/ssl/certs/{{ ansible_fqdn }}.key', mode: '755' }
+    # - { path: '/etc/ssl/certs/{{ ansible_fqdn }}.pem', mode: '755' }

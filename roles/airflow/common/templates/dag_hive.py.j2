@@ -42,7 +42,7 @@ with DAG(
     # t1, t2 and t3 are examples of tasks created by instantiating operators
     t1 = HiveOperator(
         task_id='showdb',
-        run_as_owner='true',
+        # run_as_owner='true',
         hive_cli_conn_id='hiveserver2_tdp',
         hql=(
             "SHOW DATABASES"

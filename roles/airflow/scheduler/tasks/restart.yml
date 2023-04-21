@@ -1,0 +1,10 @@
+# Copyright 2022 TOSIT.IO
+# SPDX-License-Identifier: Apache-2.0
+---
+- name: Restart airflow scheduler service
+  systemd:
+    name: airflow-scheduler
+    state: restarted
+    enabled: true
+    daemon_reload: true
+

@@ -13,7 +13,7 @@ airflow_certs_folder: "{{ airflow_root_conf_dir }}/certs"
 airflow_dag_dir: "{{ airflow_install_dir }}/dags"
 airflow_env_file: /etc/sysconfig/airflow
 hadoop_conf_dir: /etc/hadoop/conf
-
+airflow_scheduler_logs: "{{ airflow_log_dir }}/scheduler"
 # Airflow pid directories
 airflow_pid_dir: /run/airflow
 
@@ -39,7 +39,7 @@ airflow_log_dir: /var/log/airflow
 # Airflow config
 airflow_executor: CeleryExecutor
 airflow_result_backend: "db+postgresql://{{ airflow_db_user }}:{{ airflow_db_pass }}@{{ airflow_db_host }}:{{ airflow_db_port }}/{{ airflow_db_name }}"
-airflow_broker_url: "redis://edge-01:6379/0"
+airflow_broker_url: "redis://master-01:6379/0"
 
 #SSL configuration
 certificates_path: /etc/ssl/certs
@@ -94,7 +94,7 @@ airflow_users:
 hive_extra_config: >-
   {
     "use_beeline": "true", 
-    "proxy_user": "tdp_user",
+    "proxy_user": "login",
     "principal": "hive/master-03.tdp@REALM.TDP;transportMode=http;httpPath=cliservice;ssl=true;sslTrustStore=/etc/ssl/certs/truststore.jks;trustStorePassword=Truststore123!"
   }
 

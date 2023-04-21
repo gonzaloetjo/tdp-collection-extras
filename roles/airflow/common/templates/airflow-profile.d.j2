@@ -1,0 +1,9 @@
+if [ -d "/usr/local/bin" ] ; then
+    export PATH=/usr/local/bin:$PATH
+fi
+if [ -d "{{ airflow_install_dir }}" ] ; then
+    export AIRFLOW_HOME={{ airflow_install_dir }}
+fi
+if [ -d "{{ airflow_install_dir }}" ] ; then
+    export AIRFLOW_CONFIG={{ airflow_install_dir }}/airflow.cfg
+fi

@@ -32,8 +32,8 @@
   file:
     path: '{{ airflow_log_dir }}'
     state: directory
-    group: '{{ hadoop_group }}'
     owner: '{{ airflow_user }}'
+    group: '{{ hadoop_group }}'
 
 - name: Create directory for pid
   file:
@@ -75,12 +75,6 @@
     owner: root
     mode: "0755"
 
-# - name: Pip install psycopg2 
-#   pip:
-#     name: "psycopg2-binary"
-#     executable: pip3
-#     extra_args: --constraint /tmp/constraints-3.6.txt
-
 - name: Install packages
   yum:
     name:
@@ -91,18 +85,17 @@
       - krb5-devel
     state: present
 
-# - name: Install packages
-#   pip:
-#     name:
-#       - pyspnego[kerberos]
-#       - gssapi>=1.5.0
-#       - krb5>=0.3.0
-#     executable: pip3
-#     state: present
-
-- name: Pip install airflow[kerberos]
+- name: Pip install psycopg and redis #apparently needed not sure why
   pip:
-    name: "apache-airflow[kerberos]=={{ airflow_version }}"
+    name: 
+      - psycopg2
+      - redis
+    executable: pip3
+    extra_args: --constraint /tmp/constraints-3.6.txt
+
+- name: Pip install airflow[celery, kerberos]
+  pip:
+    name: "apache-airflow[celery, kerberos]=={{ airflow_version }}"
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
     state: present
@@ -119,18 +112,6 @@
     executable: pip3
     extra_args: --constraint /tmp/constraints-3.6.txt
 
-# - name: Pip install celery 
-#   pip:
-#     name: "celery"
-#     executable: pip3
-#     extra_args: --constraint /tmp/constraints-3.6.txt
-
-# - name: Pip install redis
-#   pip:
-#     name: "redis"
-#     executable: pip3
-#     extra_args: --constraint /tmp/constraints-3.6.txt
-
 - name: Template airflow.cfg file
   template:
     src: airflow.cfg.j2
@@ -145,55 +126,19 @@
     owner: airflow
     group: hadoop
 
-- name: Template the hive_dag.py.j2 file inside the dag directory
-  ansible.builtin.template:
-    src: hive_dag.py.j2
-    dest: "{{ airflow_install_dir }}/dags/hive_dag.py"
-    mode: '0644'
-    owner: airflow
-    group: hadoop
-
-- name: Template the hive_server_dag.py.j2 file inside the dag directory
-  ansible.builtin.template:
-    src: hive_server_dag.py.j2
-    dest: "{{ airflow_install_dir }}/dags/hive_server_dag.py"
-    owner: airflow
-    group: hadoop
-    mode: '0644'
-
-- name: Template the hive_insert_dag.py.j2 file inside the dag directory
-  ansible.builtin.template:
-    src: hive_insert_dag.py.j2
-    dest: "{{ airflow_install_dir }}/dags/hive_insert_dag.py"
-    owner: airflow
-    group: hadoop
-    mode: '0644'
-
-- name: Template the spark_dag.py.j2 file inside the dag directory
-  ansible.builtin.template:
-    src: spark_dag.py.j2
-    dest: "{{ airflow_install_dir }}/dags/spark_dag.py"
-    mode: '0644'
-    owner: airflow
-    group: hadoop
-
-- name: Template the spark_new_dag.py.j2 file inside the dag directory
-  ansible.builtin.template:
-    src: spark_new_dag.py.j2
-    dest: "{{ airflow_install_dir }}/dags/spark_new_dag.py"
-    mode: '0644'
-    owner: airflow
-    group: hadoop
-
-# - name: Template all the DAGs from the templates directory
-#   ansible.builtin.template:
-#     src: "{{ item }}"
-#     dest: "{{ airflow_install_dir }}/dags/{{ item | basename | regex_replace('\\.j2$', '.py') }}"
-#     mode: '0644'
-#     owner: airflow
-#     group: hadoop
-#   with_fileglob:
-#     - "templates/dag_*.j2"
+- name: Upload airflow dags templates
+  template:
+    src: "{{ item }}"
+    dest: "{{ airflow_install_dir }}/dags/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    owner: "{{ airflow_user }}"
+    group: "{{ hadoop_group }}"
+  with_items:
+    - dag_hive.py.j2
+    - dag_hive_insert.py.j2
+    - dag_hive_nyc.py.j2
+    - dag_spark.py.j2
+    - dag_spark_new.py.j2
+    - dag_hive_new.py.j2
 
 - name: Update .bashrc for Airflow user
   become: yes
@@ -204,4 +149,3 @@
       # Set environment variables for Airflow
       export AIRFLOW_HOME={{ airflow_install_dir }}
       export PATH=$PATH:/usr/local/bin
-

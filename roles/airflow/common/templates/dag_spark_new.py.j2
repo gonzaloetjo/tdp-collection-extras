@@ -7,7 +7,7 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': days_ago(1),
-    'queue': 'edge-01.tdp',  # Add the 'queue' parameter here
+    # 'queue': 'edge-01.tdp',  # Add the 'queue' parameter here
 }
 
 dag = DAG(
@@ -32,6 +32,7 @@ submit_application = SparkSubmitOperator(
     queue='default',
     application_args=['100'],
     dag=dag,
+    run_as_user='tdp_user',
 )
 
 submit_application

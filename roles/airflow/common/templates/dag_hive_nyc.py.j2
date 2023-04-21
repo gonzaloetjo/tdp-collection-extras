@@ -17,7 +17,7 @@ default_args = {
 }
 
 dag = DAG(
-    'hive_server_dag',
+    'hive_taxi_dag',
     default_args=default_args,
     description='A simple tutorial DAG',
     schedule_interval=None,
@@ -27,7 +27,7 @@ create_database = HiveOperator(
     task_id='create_database',
     hql='DROP DATABASE IF EXISTS tdp_user_db CASCADE; CREATE DATABASE IF NOT EXISTS tdp_user_db LOCATION "/warehouse/tablespace/external/hive";',
     hive_cli_conn_id='hiveserver2_tdp',
-    run_as_owner='true',
+    run_as_user='tdp_user',
     dag=dag,
 )
 
@@ -59,7 +59,7 @@ create_table = HiveOperator(
     STORED AS PARQUET
     LOCATION "data/nyc_green_taxi_trip";''',
     hive_cli_conn_id='hiveserver2_tdp',
-    run_as_owner='true',
+    run_as_user='tdp_user',
     dag=dag,
 )
 
@@ -68,7 +68,7 @@ hive_operator = HiveOperator(
     task_id='example_hive_operator',
     hql=hive_query,
     hive_cli_conn_id='hiveserver2_tdp',
-    run_as_owner='true',
+    # run_as_user='tdp_user',
     dag=dag,
 )
 
