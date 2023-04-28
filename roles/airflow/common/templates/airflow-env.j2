@@ -31,3 +31,11 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # HTTP_PROXY=
 # HTTPS_PROXY=
 # NO_PROXY=
+
+# Kerberos
+KRB5CCNAME={{ airflow_kerberos.ccache }}
+
+# Hadoop vars
+{% for name, value in airflow_hadoop_env.items() %}
+{{ name }}={{ value }}
+{% endfor %}

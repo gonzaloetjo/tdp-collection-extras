@@ -25,9 +25,9 @@ Wants=network-online.target
 RuntimeDirectory=airflow
 EnvironmentFile={{ airflow_env_file }}
 User={{ airflow_user }}
-Group={{ hadoop_group }}
+Group={{ airflow_group }}
 Type=simple
-ExecStart=/usr/local/bin/airflow scheduler --pid {{ airflow_pid_dir }}/scheduler.pid
+ExecStart={{ airflow_executable }} scheduler --pid {{ airflow_pid_dir }}/scheduler.pid
 Restart=always
 RestartSec=5s
 

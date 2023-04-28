@@ -1,9 +1,4 @@
 ---
-- name: Ensure airflow configured
-  import_role:
-    name: tosit.tdp_extra.airflow.common
-    tasks_from: config
-
 - name: Template Airflow worker service file
   template:
     src: airflow-worker.service.j2

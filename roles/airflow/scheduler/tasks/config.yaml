@@ -10,7 +10,7 @@
   file:
     path: "{{ item.path }}"
     owner: "{{ airflow_user }}"
-    group: "{{ hadoop_group }}"
+    group: "{{ airflow_group }}"
     mode: "{{ item.mode }}"
     recurse: yes
   with_items:
