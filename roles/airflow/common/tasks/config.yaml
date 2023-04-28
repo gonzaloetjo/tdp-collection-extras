@@ -51,5 +51,5 @@
 - name: Change default beeline
   become: yes
   become_user: root
-  shell: mv /usr/local/bin/beeline{,.airflow.bkp}
+  shell: mv {{ airflow_install_dir }}/bin/beeline{,.airflow.bkp}
   ignore_errors: true

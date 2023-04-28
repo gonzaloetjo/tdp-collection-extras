@@ -48,29 +48,52 @@
     src: "{{ airflow_constraints_file }}.j2"
     dest: "/tmp/{{ airflow_constraints_file }}"
 
-
 - name: Install Required packages
   yum:
     pkg: "{{ airflow_required_packages }}"
     state: present
   when: airflow_required_packages is defined
 
+- name: Airflow | Install virtualenv in {{ airflow_python }}
+  become: true
+  shell: "{{ airflow_python }} -m pip install virtualenv"
+
+- name: Airflow | Check if exists virtualenv
+  stat:
+    path: "{{ airflow_install_dir }}/bin"
+  register: virtualenv
+
+- name: Airflow | Create a virtualenv
+  shell: "virtualenv --system-site-packages -p {{ airflow_python }} {{ airflow_install_dir }}"
+  when: not virtualenv.stat.exists
+
+- name: Airflow | upgrade pip
+  pip:
+    name: pip
+    extra_args: --upgrade
+    virtualenv: "{{ airflow_install_dir }}"
+    virtualenv_python: "{{ airflow_python }}"
+
 - name: Install Python dependencies
   pip:
     name: "{{ airflow_required_python_packages }}"
-    executable: pip3
+    virtualenv: "{{ airflow_install_dir }}"
+    virtualenv_python: "{{ airflow_python }}"
     extra_args: --constraint /tmp/{{ airflow_constraints_file }}
   when: airflow_required_python_packages is defined
 
 - name: Pip install airflow {{ airflow_version }}
   pip:
     name: "apache-airflow=={{ airflow_version }}"
-    executable: pip3
+    virtualenv: "{{ airflow_install_dir }}"
+    virtualenv_python: "{{ airflow_python }}"
     extra_args: --constraint /tmp/{{ airflow_constraints_file }}
 
 - name: Pip install airflow extra packages
   pip:
     name: "{{ airflow_extra_packages }}"
+    virtualenv: "{{ airflow_install_dir }}"
+    virtualenv_python: "{{ airflow_python }}"
     extra_args: --constraint /tmp/{{ airflow_constraints_file }}
   when: airflow_extra_packages is defined
 
@@ -96,4 +119,4 @@
     block: |
       # Set environment variables for Airflow
       export AIRFLOW_HOME={{ airflow_install_dir }}
-      export PATH=$PATH:/usr/local/bin
+      export PATH={{ airflow_install_dir }}/bin:$PATH
