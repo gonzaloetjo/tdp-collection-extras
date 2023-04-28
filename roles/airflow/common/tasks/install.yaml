@@ -3,45 +3,34 @@
   include_role:
     name: tosit.tdp.utils.group
   vars:
-    group: "{{ hadoop_group }}"
+    group: "{{ airflow_group }}"
 
 - name: Ensure airflow user exists
   include_role:
     name: tosit.tdp.utils.user
   vars:
     user: "{{ airflow_user }}"
-    group: "{{ hadoop_group }}"
+    group: "{{ airflow_group }}"
 
-- name: Ensures {{ airflow_root_dir }} exists
+- name: Airfloww | Ensures airflow install, certificates and configuration directories
   file:
-    path: "{{ airflow_root_dir }}"
+    path: "{{ item }}"
     state: directory
     owner: root
     group: root
-    mode: "755"
-
-- name: Ensures {{ airflow_root_dir }}/airflow-{{ airflow_version }} exists
-  file:
-    path: "{{ airflow_root_dir }}/airflow-{{ airflow_version }}"
-    state: directory
-    owner: root
-    group: root
-    mode: "755"
+    mode: 0755
+  with_items:
+    - "{{ airflow_root_dir }}/airflow-{{ airflow_version }}"
+    - "{{ airflow_certs_dir }}"
+    - "{{ airflow_root_conf_dir }}"
+    - "{{ airflow_pid_dir }}"
 
 - name: Ensures log directory
   file:
     path: '{{ airflow_log_dir }}'
     state: directory
     owner: '{{ airflow_user }}'
-    group: '{{ hadoop_group }}'
-
-- name: Create directory for pid
-  file:
-    path: '{{ airflow_pid_dir }}'
-    state: directory
-    group: root
-    owner: root
-    mode: "755"
+    group: '{{ airflow_group }}'
 
 - name: Template airflow tmpfiles.d
   template:
@@ -56,89 +45,48 @@
 
 - name: Template Constraint file
   template:
-    src: constraints-3.6.txt.j2
-    dest: /tmp/constraints-3.6.txt
+    src: "{{ airflow_constraints_file }}.j2"
+    dest: "/tmp/{{ airflow_constraints_file }}"
 
-- name: Create configuration directory
-  file:
-    path: "{{ airflow_root_conf_dir }}"
-    state: directory
-    owner: root
-    group: root
-    mode: "755"
 
-- name: Create certificates directory
-  file:
-    path: "{{ airflow_certs_folder }}"
-    state: directory
-    group: root
-    owner: root
-    mode: "0755"
-
-- name: Install packages
+- name: Install Required packages
   yum:
-    name:
-      - gcc-c++
-      - python-devel.x86_64
-      - python3-devel.x86_64
-      - cyrus-sasl-devel.x86_64
-      - krb5-devel
+    pkg: "{{ airflow_required_packages }}"
     state: present
+  when: airflow_required_packages is defined
 
-- name: Pip install psycopg and redis #apparently needed not sure why
+- name: Install Python dependencies
   pip:
-    name: 
-      - psycopg2
-      - redis
+    name: "{{ airflow_required_python_packages }}"
     executable: pip3
-    extra_args: --constraint /tmp/constraints-3.6.txt
+    extra_args: --constraint /tmp/{{ airflow_constraints_file }}
+  when: airflow_required_python_packages is defined
 
-- name: Pip install airflow[celery, kerberos]
+- name: Pip install airflow {{ airflow_version }}
   pip:
-    name: "apache-airflow[celery, kerberos]=={{ airflow_version }}"
+    name: "apache-airflow=={{ airflow_version }}"
     executable: pip3
-    extra_args: --constraint /tmp/constraints-3.6.txt
-    state: present
+    extra_args: --constraint /tmp/{{ airflow_constraints_file }}
 
-- name: Pip install apache-hive provider
+- name: Pip install airflow extra packages
   pip:
-    name: "apache-airflow-providers-apache-hive"
-    executable: pip3
-    extra_args: --constraint /tmp/constraints-3.6.txt
-
-- name: Pip install apache-spark provider
-  pip:
-    name: "apache-airflow-providers-apache-spark"
-    executable: pip3
-    extra_args: --constraint /tmp/constraints-3.6.txt
+    name: "{{ airflow_extra_packages }}"
+    extra_args: --constraint /tmp/{{ airflow_constraints_file }}
+  when: airflow_extra_packages is defined
 
 - name: Template airflow.cfg file
   template:
     src: airflow.cfg.j2
     dest: "{{ airflow_install_dir }}/airflow.cfg"
 
-# Dags: move this to a separate task later
-- name: Create dag directory in /opt/tdp/airflow/airflow
-  ansible.builtin.file:
-    path: "{{ airflow_install_dir }}/dags"
-    state: directory
-    mode: '0755'
-    owner: airflow
-    group: hadoop
-
-- name: Upload airflow dags templates
+- name: Airflow | Upload airflow DAGs templates
   template:
     src: "{{ item }}"
-    dest: "{{ airflow_install_dir }}/dags/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    dest: "{{ airflow_dag_dir }}/{{ item | basename | splitext | first }}"
     owner: "{{ airflow_user }}"
-    group: "{{ hadoop_group }}"
-  with_items:
-    - dag_hive.py.j2
-    - dag_hive_insert.py.j2
-    - dag_hive_nyc.py.j2
-    - dag_spark.py.j2
-    - dag_spark_new.py.j2
-    - dag_hive_new.py.j2
+    group: "{{ airflow_group }}"
+  with_fileglob: "{{role_path}}/templates/dags/*.j2"
+  ignore_errors: true
 
 - name: Update .bashrc for Airflow user
   become: yes

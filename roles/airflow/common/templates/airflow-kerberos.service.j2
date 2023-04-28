@@ -24,10 +24,10 @@ Wants=postgresql.service mysql.service redis.service rabbitmq-server.service
 [Service]
 RuntimeDirectory=airflow
 EnvironmentFile={{ airflow_env_file }}
-User=airflow
-Group=hadoop
+User={{ airflow_user }}
+Group={{ airflow_group }}
 Type=simple
-ExecStart=/usr/local/bin/airflow kerberos
+ExecStart={{ airflow_executable }} kerberos --pid {{ airflow_pid_dir }}/kerberos.pid
 Restart=on-failure
 RestartSec=5s
 
