@@ -7,15 +7,15 @@ airflow_app_name: airflow
 airflow_version: 2.2.5
 
 # Airflow directory
-airflow_root_dir: /opt/tdp/airflow
+airflow_root_dir: /opt/tdp
 airflow_install_dir: "{{ airflow_root_dir }}/airflow"
 airflow_root_conf_dir: /etc/airflow
-airflow_certs_folder: "{{ airflow_root_conf_dir }}/certs"
+airflow_certs_dir: "{{ airflow_root_conf_dir }}/certs"
 airflow_dag_dir: "{{ airflow_install_dir }}/dags"
 airflow_env_file: /etc/sysconfig/airflow
 airflow_log_dir: /var/log/airflow
-airflow_scheduler_logs: "{{ airflow_log_dir }}/scheduler"
-# Airflow pid directories
+airflow_child_process_log_dir: "{{ airflow_log_dir }}/scheduler"
+airflow_plugins_dir: "{{ airflow_install_dir }}/plugins"
 airflow_pid_dir: /run/airflow
 
 # Airflow Executable:
@@ -67,7 +67,7 @@ airflow_db_pass: airflow
 airflow_db_host: master-03
 airflow_db_port: 5432
 airflow_db_name: airflow
-aitflow_sql_alchemy_conn: "postgresql+psycopg2://{{ airflow_db_user }}:{{ airflow_db_pass }}@{{ airflow_db_host }}:{{ airflow_db_port }}/{{ airflow_db_name }}"
+airflow_sql_alchemy_conn: "postgresql+psycopg2://{{ airflow_db_user }}:{{ airflow_db_pass }}@{{ airflow_db_host }}:{{ airflow_db_port }}/{{ airflow_db_name }}"
 
 # Airflow admin user
 airflow_admin_user: admin
@@ -86,9 +86,9 @@ certificates_ca_filename: "tdp_ca"
 certificates_public_key: "{{ certificates_path }}/{{ certificates_cert_filename }}.pem"
 certificates_private_key: "{{ certificates_path }}/{{ certificates_cert_filename }}.key"
 certificates_ca: "{{ certificates_path }}/{{ certificates_ca_filename }}.crt" 
-airflow_public_key: "{{ airflow_certs_folder }}/{{ certificates_cert_filename }}.pem"
-airflow_private_key: "{{ airflow_certs_folder }}/{{ certificates_cert_filename }}.key"
-ca_certificate_file: "{{ airflow_certs_folder }}/{{ certificates_ca_filename }}.crt"
+airflow_public_key: "{{ airflow_certs_dir }}/{{ certificates_cert_filename }}.pem"
+airflow_private_key: "{{ airflow_certs_dir }}/{{ certificates_cert_filename }}.key"
+ca_certificate_file: "{{ airflow_certs_dir }}/{{ certificates_ca_filename }}.crt"
 
 ssl_certificate: "{{ airflow_public_key }}"
 ssl_private_key: "{{ airflow_private_key }}"

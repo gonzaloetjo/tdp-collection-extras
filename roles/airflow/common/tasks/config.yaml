@@ -12,7 +12,7 @@
     - { path: '{{ airflow_root_conf_dir }}', mode: '0755' }
     - { path: '{{ airflow_log_dir }}', mode: '0755' }
     - { path: '{{ airflow_dag_dir }}', mode: '0755' }
-    - { path: '{{ airflow_scheduler_logs }}', mode: '0755' }
+    - { path: '{{ airflow_child_process_log_dir }}', mode: '0755' }
     - { path: '{{ airflow_plugins_dir }}', mode: '0755' }
 
 - name: Copy airflow.cfg file
@@ -29,11 +29,9 @@
   template:
     src: airflow-profile.d.j2
     dest: "/etc/profile.d/airflow.sh"
-  register: airflow_profile
 
 - name: Reload profile
   shell: source /etc/profile.d/airflow.sh
-  when: airflow_profile.changed
 
 - name: Airflow environment variables file
   template:
@@ -52,4 +50,13 @@
   become: yes
   become_user: root
   shell: mv {{ airflow_install_dir }}/bin/beeline{,.airflow.bkp}
+  ignore_errors: true
+
+- name: Airflow | Upload airflow DAGs templates
+  template:
+    src: "{{ item }}"
+    dest: "{{ airflow_dag_dir }}/{{ item | basename | splitext | first }}"
+    owner: "{{ airflow_user }}"
+    group: "{{ airflow_group }}"
+  with_fileglob: "{{role_path}}/templates/dags/*.j2"
   ignore_errors: true

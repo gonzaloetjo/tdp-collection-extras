@@ -22,12 +22,12 @@ After=network.target postgresql.service mysql.service redis.service rabbitmq-ser
 Wants=postgresql.service mysql.service redis.service rabbitmq-server.service
 
 [Service]
-RuntimeDirectory=airflow
+RuntimeDirectory=airflow-kerberos
 EnvironmentFile={{ airflow_env_file }}
 User={{ airflow_user }}
 Group={{ airflow_group }}
 Type=simple
-ExecStart={{ airflow_executable }} kerberos --pid {{ airflow_pid_dir }}/kerberos.pid
+ExecStart={{ airflow_executable }} kerberos --pid {{ airflow_pid_dir }}-kerberos/kerberos.pid
 Restart=on-failure
 RestartSec=5s
 
