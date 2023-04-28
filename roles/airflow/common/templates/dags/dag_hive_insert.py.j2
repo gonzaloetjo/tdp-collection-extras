@@ -6,7 +6,6 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': days_ago(1),
-    # 'queue': 'edge-01.tdp',  # Move the 'queue' parameter here
 }
 
 dag = DAG(
@@ -20,7 +19,6 @@ create_database = HiveOperator(
     task_id='create_database',
     hql="CREATE DATABASE IF NOT EXISTS tdp_user_dag_insert_test LOCATION '/user/tdp_user/warehouse/tdp_user_dag_insert_test.db'",
     hive_cli_conn_id='hiveserver2_tdp',
-    # run_as_user='tdp_user',
     dag=dag,
 )
 
@@ -33,7 +31,6 @@ create_table = HiveOperator(
         STORED AS PARQUET
     ''',
     hive_cli_conn_id='hiveserver2_tdp',
-    # run_as_user='tdp_user',
     dag=dag,
 )
 
@@ -41,8 +38,15 @@ insert_data = HiveOperator(
     task_id='insert_data',
     hql=f'''INSERT INTO tdp_user_dag_insert_test.table_insert_test (id, name) VALUES (1, 'John Doe')''',
     hive_cli_conn_id='hiveserver2_tdp',
-    run_as_user='tdp_user',
     dag=dag,
 )
 
-create_database >> create_table >> insert_data
+hive_query = "SELECT * FROM tdp_user_dag_insert_test.table_insert_test LIMIT 3"
+select_data = HiveOperator(
+    task_id='select_data',
+    hql=hive_query,
+    hive_cli_conn_id='hiveserver2_tdp',
+    dag=dag,
+)
+
+create_database >> create_table >> insert_data >> select_data

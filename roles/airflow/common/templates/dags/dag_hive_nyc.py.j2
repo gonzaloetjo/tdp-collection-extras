@@ -11,7 +11,6 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': days_ago(1),
-    'queue': 'edge-01.tdp',  # Move the 'queue' parameter here
     'retries': 1,
     'retry_delay': timedelta(minutes=5),
 }
@@ -27,7 +26,6 @@ create_database = HiveOperator(
     task_id='create_database',
     hql='DROP DATABASE IF EXISTS tdp_user_db CASCADE; CREATE DATABASE IF NOT EXISTS tdp_user_db LOCATION "/warehouse/tablespace/external/hive";',
     hive_cli_conn_id='hiveserver2_tdp',
-    run_as_user='tdp_user',
     dag=dag,
 )
 
@@ -59,7 +57,6 @@ create_table = HiveOperator(
     STORED AS PARQUET
     LOCATION "data/nyc_green_taxi_trip";''',
     hive_cli_conn_id='hiveserver2_tdp',
-    run_as_user='tdp_user',
     dag=dag,
 )
 
@@ -68,7 +65,6 @@ hive_operator = HiveOperator(
     task_id='example_hive_operator',
     hql=hive_query,
     hive_cli_conn_id='hiveserver2_tdp',
-    # run_as_user='tdp_user',
     dag=dag,
 )
 
