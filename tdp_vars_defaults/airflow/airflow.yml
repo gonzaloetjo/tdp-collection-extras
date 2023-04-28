@@ -56,7 +56,8 @@ airflow_extra_packages:
   - apache-airflow-providers-apache-hive
   - apache-airflow-providers-apache-spark
 
-# airflow conf template.
+# airflow conf template. 
+# For old versions of airflow use airflow-v1.cfg 
 airflow_conf_template: airflow-v1.cfg
 webserver_conf_template: webserver_config.py
 
