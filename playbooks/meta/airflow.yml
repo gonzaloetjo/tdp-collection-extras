@@ -17,7 +17,8 @@
 - import_playbook: ../airflow_worker_config.yml
 
 # Restart airflow services
-- import_playbook: ../airflow_broker_restart.yml
-- import_playbook: ../airflow_webserver_restart.yml
-- import_playbook: ../airflow_scheduler_restart.yml
-- import_playbook: ../airflow_worker_restart.yml
+- import_playbook: ../airflow_broker_start.yml
+- import_playbook: ../airflow_webserver_start.yml
+- import_playbook: ../airflow_init.yml
+- import_playbook: ../airflow_scheduler_start.yml
+- import_playbook: ../airflow_worker_start.yml
