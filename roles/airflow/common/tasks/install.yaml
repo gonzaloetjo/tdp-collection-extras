@@ -60,6 +60,8 @@
 - name: Airflow | Create a virtualenv
   shell: "virtualenv --system-site-packages -p {{ airflow_python }} {{ airflow_install_dir }}"
   when: not virtualenv.stat.exists
+  environment:
+    PATH: "$PATH:/usr/local/bin"
 
 - name: Airflow | upgrade pip
   pip:
