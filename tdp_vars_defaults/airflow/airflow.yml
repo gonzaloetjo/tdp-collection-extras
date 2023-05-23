@@ -4,7 +4,7 @@
 ---
 # Airflow Version
 airflow_app_name: airflow
-airflow_version: 2.2.5
+airflow_version: 2.6.1
 
 # Airflow directory
 airflow_root_dir: /opt/tdp
@@ -27,8 +27,8 @@ airflow_group: airflow
 
 # Airflow python
 # Airflow version > 2.2.5 requires python >= 3.7.
-airflow_python: python3.6
-airflow_constraints_file: constraints-3.6.txt
+airflow_python: /usr/local/bin/python3.9
+airflow_constraints_file: constraints-3.9.txt
 
 # Required packages
 airflow_required_packages:
@@ -58,8 +58,11 @@ airflow_extra_packages:
 
 # airflow conf template. 
 # For old versions of airflow use airflow-v1.cfg 
-airflow_conf_template: airflow-v1.cfg
+airflow_conf_template: airflow-v2.cfg
 webserver_conf_template: webserver_config.py
+
+# Read more: https://airflow.apache.org/docs/apache-airflow/1.10.10/security.html?highlight=impersonation#impersonation
+airflow_impersonation: true
 
 # Airflow database
 airflow_db_user: airflow
