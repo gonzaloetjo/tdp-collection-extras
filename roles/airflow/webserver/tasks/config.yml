@@ -9,18 +9,18 @@
   environment:
     AIRFLOW_HOME: "{{ airflow_install_dir }}"
 
-- name: Admin and users
-  shell: |
-    "{{ airflow_executable }}" users create \
-      --username {{ item.username }} \
-      --password {{ item.password }} \
-      --role {{ item.role }} \
-      --firstname {{ item.firstname }} \
-      --lastname {{ item.lastname }} \
-      --email {{ item.email }}
-  with_items: "{{ airflow_admin + (airflow_users if airflow_users is defined else []) }}"
-  environment:
-    AIRFLOW_HOME: "{{ airflow_install_dir }}"
+# - name: Add airflow admin and users
+#   shell: |
+#     "{{ airflow_executable }}" users create \
+#       --username {{ item.username }} \
+#       --password {{ item.password }} \
+#       --role {{ item.role }} \
+#       --firstname {{ item.firstname }} \
+#       --lastname {{ item.lastname }} \
+#       --email {{ item.email }}
+#   with_items: "{{ airflow_admin + (airflow_users if airflow_users is defined else []) }}"
+#   environment:
+#     AIRFLOW_HOME: "{{ airflow_install_dir }}"
 
 - name: Template webserver_config.py file
   template:
