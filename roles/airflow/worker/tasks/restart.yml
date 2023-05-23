@@ -1,12 +1,12 @@
 ---
-- name: start airflow worker service
+- name: Restart airflow worker service
   systemd:
     name: airflow-worker
     state: restarted
     enabled: true
     daemon_reload: true
 
-- name: start airflow kerberos service
+- name: Restart airflow kerberos service
   systemd:
     name: airflow-kerberos
     state: restarted

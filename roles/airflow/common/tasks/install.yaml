@@ -48,22 +48,22 @@
     state: present
   when: airflow_required_packages is defined
 
-- name: Airflow | Install virtualenv in {{ airflow_python }}
+- name: Install virtualenv in {{ airflow_python }}
   become: true
   shell: "{{ airflow_python }} -m pip install virtualenv"
 
-- name: Airflow | Check if exists virtualenv
+- name: Check if exists virtualenv
   stat:
     path: "{{ airflow_install_dir }}/bin"
   register: virtualenv
 
-- name: Airflow | Create a virtualenv
+- name: Create a virtualenv
   shell: "virtualenv --system-site-packages -p {{ airflow_python }} {{ airflow_install_dir }}"
   when: not virtualenv.stat.exists
   environment:
     PATH: "$PATH:/usr/local/bin"
 
-- name: Airflow | upgrade pip
+- name: upgrade virtualenv pip
   pip:
     name: pip
     extra_args: --upgrade

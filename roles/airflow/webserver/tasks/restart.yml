@@ -7,17 +7,3 @@
     state: restarted
     enabled: true
     daemon_reload: true
-
-- name: restart airflow kerberos service
-  systemd:
-    name: airflow-kerberos
-    state: restarted
-    enabled: true
-    daemon_reload: true
-
-- name: restart airflow flower service
-  systemd:
-    name: airflow-flower
-    state: restarted
-    enabled: true
-    daemon_reload: true
