@@ -1,4 +1,9 @@
 ---
+- name: Template webserver_config.py file
+  template:
+    src: webserver_config.py.j2
+    dest: "{{ airflow_install_dir }}/webserver_config.py"
+  
 - name: Airflow Database Init
   shell: "{{ airflow_executable }} db init"
   environment:
