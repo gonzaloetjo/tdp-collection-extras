@@ -12,7 +12,7 @@
     user: "{{ airflow_user }}"
     group: "{{ airflow_group }}"
 
-- name: Ensures airflow install, certificates and configuration directories
+- name: Ensures {{ airflow_root_dir }}/airflow-{{ airflow_version }} exists
   file:
     path: "{{ airflow_root_dir }}/airflow-{{ airflow_version }}"
     state: directory
@@ -82,10 +82,28 @@
     extra_args: --constraint /tmp/{{ airflow_constraints_file }}
   when: airflow_extra_packages is defined
 
-- name: "Render /usr/bin/airflow command"
+- name: Render /usr/bin/airflow command
   template:
-    src: spark-submit-command.j2
+    src: airflow-command.j2
     dest: "/usr/bin/airflow"
     owner: root
     group: root
     mode: "755"
+
+- name: Ensures airflow configuration, log, dags and plugins directories
+  become: yes
+  become_user: root
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ airflow_user }}"
+    group: "{{ airflow_group }}"
+    mode: "{{ item.mode }}"
+    recurse: yes
+  with_items:
+    - { path: '{{ airflow_conf_dir }}', mode: '0755' }
+    - { path: '{{ airflow_certs_dir }}', mode: '0755' }
+    - { path: '{{ airflow_log_dir }}', mode: '0775' }
+    - { path: '{{ airflow_child_process_log_dir }}', mode: '0775' }
+    - { path: '{{ airflow_dag_dir }}', mode: '0755' }
+    - { path: '{{ airflow_plugins_dir }}', mode: '0755' }
