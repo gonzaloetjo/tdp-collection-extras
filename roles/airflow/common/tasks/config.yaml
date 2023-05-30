@@ -10,20 +10,15 @@
     recurse: yes
   with_items:
     - { path: '{{ airflow_conf_dir }}', mode: '0755' }
-    - { path: '{{ airflow_log_dir }}', mode: '0755' }
+    - { path: '{{ airflow_log_dir }}', mode: '0775' }
     - { path: '{{ airflow_dag_dir }}', mode: '0755' }
-    - { path: '{{ airflow_child_process_log_dir }}', mode: '0755' }
+    - { path: '{{ airflow_child_process_log_dir }}', mode: '0775' }
     - { path: '{{ airflow_plugins_dir }}', mode: '0755' }
 
 - name: Copy airflow.cfg file
   template:
     src: "{{ airflow_conf_template }}.j2"
     dest: "{{ airflow_install_dir }}/airflow.cfg"
-
-- name: Copy webserver_config.py file
-  template:
-    src: "{{ webserver_conf_template }}.j2"
-    dest: "{{ airflow_install_dir }}/webserver_config.py"
 
 - name: Template profile.d
   template:
@@ -53,10 +48,10 @@
 - name: Add users to the airflow group # For impersonation
   become: yes
   user:
-    name: "{{ item.username }}"
+    name: "{{ item.user }}"
     groups: "{{ airflow_group }}"
     append: yes
-  with_items: "{{ airflow_users }}"
+  with_items: "{{ users }}"
   when: airflow_impersonation
   ignore_errors: true
 
