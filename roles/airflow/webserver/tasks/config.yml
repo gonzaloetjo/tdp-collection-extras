@@ -1,16 +1,33 @@
 ---
+- name: Ensures {{ airflow_policies_dir }} exists
+  become: yes
+  become_user: root
+  file:
+    path: "{{ airflow_policies_dir }}"
+    state: directory
+    owner: "{{ airflow_user }}"
+    group: "{{ airflow_group }}"
+    mode: "0755"
+    recurse: yes
+
 - name: Template airflow_local_settings.py file
   template:
     src: airflow_local_settings.py.j2
+    dest: "{{ airflow_policies_dir }}/airflow_local_settings.py"
+
+- name: Create symbolic link to airflow_local_settings.py
+  file:
+    src: "{{ airflow_policies_dir }}/airflow_local_settings.py"
     dest: "{{ airflow_conf_dir }}/airflow_local_settings.py"
-  
-- name: Airflow Database Init
-  shell: "{{ airflow_executable }} db init"
+    state: link
 
 - name: Template Airflow webserver service file
   template:
     src: airflow-webserver.service.j2
     dest: /usr/lib/systemd/system/airflow-webserver.service
+  
+- name: Airflow Database Init
+  shell: "{{ airflow_executable }} db init"
 
 - name: Airflow | Delete connections
   command: "{{ airflow_executable }} connections delete {{ item.conn_id }}"
@@ -27,7 +44,6 @@
   with_items: "{{ airflow_connections }}"
   ignore_errors: true
 
-- name: Template Airflow flower service file
-  template:
-    src: airflow-flower.service.j2
-    dest: /usr/lib/systemd/system/airflow-flower.service
+
+
+

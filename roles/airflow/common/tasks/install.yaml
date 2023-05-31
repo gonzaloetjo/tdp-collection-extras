@@ -101,7 +101,9 @@
     mode: "{{ item.mode }}"
     recurse: yes
   with_items:
+    - { path: '{{ airflow_root_conf_dir }}', mode: '0755' }
     - { path: '{{ airflow_conf_dir }}', mode: '0755' }
+    - { path: '{{ airflow_pid_dir }}', mode: '0755' }
     - { path: '{{ airflow_certs_dir }}', mode: '0755' }
     - { path: '{{ airflow_log_dir }}', mode: '0775' }
     - { path: '{{ airflow_child_process_log_dir }}', mode: '0775' }

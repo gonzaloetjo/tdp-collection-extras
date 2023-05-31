@@ -17,6 +17,12 @@
     src: webserver_config.py.j2
     dest: "{{ airflow_install_dir }}/webserver_config.py"
 
+- name: Create symbolic link to webserver_config.py
+  file:
+    src: "{{ airflow_install_dir }}/webserver_config.py"
+    dest: "{{ airflow_conf_dir }}/webserver_config.py"
+    state: link
+
 - name: Add users to the airflow group # For impersonation
   become: yes
   user:

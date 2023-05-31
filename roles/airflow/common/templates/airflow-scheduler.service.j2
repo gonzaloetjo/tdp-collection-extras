@@ -27,7 +27,7 @@ EnvironmentFile={{ airflow_env_file }}
 User={{ airflow_user }}
 Group={{ airflow_group }}
 Type=simple
-ExecStart={{ airflow_executable }} scheduler --pid {{ airflow_pid_dir }}-scheduler/scheduler.pid
+ExecStart={{ airflow_executable }} scheduler --pid {{ airflow_pid_dir }}/airflow-scheduler.pid
 Restart=always
 RestartSec=5s
 

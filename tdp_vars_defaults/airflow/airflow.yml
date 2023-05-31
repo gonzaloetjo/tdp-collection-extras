@@ -9,14 +9,16 @@ airflow_version: 2.6.1
 # Airflow directory
 airflow_root_dir: /opt/tdp
 airflow_install_dir: "{{ airflow_root_dir }}/airflow"
-airflow_conf_dir: "{{ airflow_install_dir }}/config"
-airflow_certs_dir: "{{ airflow_conf_dir }}/certs"
+airflow_root_conf_dir: /etc/airflow
+airflow_conf_dir: "{{ airflow_root_conf_dir }}/conf"
+airflow_certs_dir: "{{ airflow_root_conf_dir }}/certs"
 airflow_dag_dir: "{{ airflow_install_dir }}/dags"
-airflow_env_file: /etc/sysconfig/airflow
+airflow_env_file: "{{airflow_conf_dir }}/airflow.sh"
 airflow_log_dir: /var/log/airflow
 airflow_child_process_log_dir: "{{ airflow_log_dir }}/scheduler"
 airflow_plugins_dir: "{{ airflow_install_dir }}/plugins"
-airflow_pid_dir: /run/airflow
+airflow_pid_dir: /var/run/airflow
+airflow_policies_dir: "{{ airflow_install_dir }}/config"
 
 # Airflow Executable:
 airflow_executable: /usr/bin/airflow
@@ -75,9 +77,6 @@ airflow_db_port: 5432
 airflow_db_name: airflow
 airflow_sql_alchemy_conn: "postgresql+psycopg2://{{ airflow_db_user }}:{{ airflow_db_pass }}@{{ airflow_db_host }}:{{ airflow_db_port }}/{{ airflow_db_name }}"
 
-flower_basic_auth_user: admin
-flower_basic_auth_password: admin123
-
 # Airflow config
 airflow_web_server_port: 8280
 airflow_flower_port: 8281
@@ -101,6 +100,9 @@ ssl_private_key: "{{ airflow_private_key }}"
 
 # Redis configuration
 redis_bind_address: 0.0.0.0
+
+flower_basic_auth_user: admin
+flower_basic_auth_password: admin123
 
 # Airflow connections params
 airflow_hive:
