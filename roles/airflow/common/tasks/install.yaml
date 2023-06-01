@@ -109,3 +109,11 @@
     - { path: '{{ airflow_child_process_log_dir }}', mode: '0775' }
     - { path: '{{ airflow_dag_dir }}', mode: '0755' }
     - { path: '{{ airflow_plugins_dir }}', mode: '0755' }
+
+- name: Template airflow tmpfiles.d
+  template:
+    src: tmpfiles-airflow.conf.j2
+    dest: /etc/tmpfiles.d/airflow.conf
+    owner: root
+    group: root
+    mode: "644"
