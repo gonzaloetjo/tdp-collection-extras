@@ -13,7 +13,7 @@ airflow_root_conf_dir: /etc/airflow
 airflow_conf_dir: "{{ airflow_root_conf_dir }}/conf"
 airflow_certs_dir: "{{ airflow_root_conf_dir }}/certs"
 airflow_dag_dir: "{{ airflow_install_dir }}/dags"
-airflow_env_file: "{{airflow_conf_dir }}/airflow.sh"
+airflow_env_file: "{{airflow_conf_dir }}/airflow-env.sh"
 airflow_log_dir: /var/log/airflow
 airflow_child_process_log_dir: "{{ airflow_log_dir }}/scheduler"
 airflow_plugins_dir: "{{ airflow_install_dir }}/plugins"
@@ -178,12 +178,13 @@ airflow_ldap:
   uid_field: "uid"
   bind_user: "cn=Manager,ou=tdp,o=tosit,c=io"
   bind_password: "secret"
-  group_field: "memberof,ismemberof"
+  group_field: "gidNumber"
   role_admin: "Admin"
   user_registration: True
-  user_registration_role: "User"
-  user_registration_firstname_field: "uid"
-  user_registration_lastname_field: "uid"
-  user_registration_mail_field: "uid"
+  user_registration_role: "Viewer"
+  user_registration_firstname_field: "cn"
+  user_registration_lastname_field: "sn"
+  user_registration_mail_field: "cn"
   roles_sync_at_login: True
+  permanent_session_lifetime: 1800
   use_tls: False
