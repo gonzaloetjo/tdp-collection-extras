@@ -28,7 +28,7 @@ from airflow.operators.bash import BashOperator
 log = logging.getLogger(__name__)
 
 default_args = {
-    'owner': 'airflow',
+    'owner': 'tdp_user',
     'depends_on_past': False,
 }
 
@@ -51,6 +51,10 @@ with DAG(
     catchup=False,
     schedule_interval=None,
     tags=['example'],
+    access_control={
+       "tdp": {"can_dag_read"},
+       "tdp_user": {"can_dag_read", "can_dag_edit", "can_delete"},
+        }
 ) as dag:
     print_value(generate_value())
 

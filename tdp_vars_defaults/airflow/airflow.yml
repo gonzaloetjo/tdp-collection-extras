@@ -181,10 +181,49 @@ airflow_ldap:
   group_field: "gidNumber"
   role_admin: "Admin"
   user_registration: True
-  user_registration_role: "Viewer"
+  user_registration_role: "Public"
   user_registration_firstname_field: "cn"
   user_registration_lastname_field: "sn"
   user_registration_mail_field: "cn"
   roles_sync_at_login: True
   permanent_session_lifetime: 1800
   use_tls: False
+
+# Access Control
+airflow_extra_roles:
+   - tdp
+   - tdp_user
+   - smoke_user
+
+airflow_roles_mapping:
+  - id: 1101 # group_field value
+    role: 
+      - "tdp"
+      - "tdp_user"
+  - id: 1102
+    role: 
+      - "Admin"
+      - "tdp"
+      - "smoke_user"
+
+airflow_roles_base_permissions:
+  - { resource: "Audit Logs", actions: ["can_read", "menu_access"] }
+  - { resource: "Browse", actions: ["can_read", "menu_access"] }
+  - { resource: "DAG Code", actions: ["can_read"] }
+  - { resource: "DAG Dependencies", actions: ["can_read", "menu_access"] }
+  - { resource: "DAG Runs", actions: ["can_create", "can_delete", "can_edit", "can_read", "menu_access"] }
+  - { resource: "DAG Warnings", actions: ["can_read"] }
+  - { resource: "DAGs", actions: ["menu_access"] }
+  - { resource: "Datasets", actions: ["can_read", "menu_access"] }
+  - { resource: "Docs", actions: ["menu_access"] }
+  - { resource: "Documentation", actions: ["menu_access"] }
+  - { resource: "ImportError", actions: ["can_read"] }
+  - { resource: "Jobs", actions: ["can_read", "menu_access"] }
+  - { resource: "My Password", actions: ["can_edit", "can_read"] }
+  - { resource: "My Profile", actions: ["can_edit", "can_read"] }
+  - { resource: "Plugins", actions: ["can_read", "menu_access"] }
+  - { resource: "SLA Misses", actions: ["can_read", "menu_access"] }
+  - { resource: "Task Instances", actions: ["can_create", "can_delete", "can_edit", "can_read", "menu_access"] }
+  - { resource: "Task Logs", actions: ["can_read"] }
+  - { resource: "Website", actions: ["can_read"] }
+  - { resource: "XComs", actions: ["can_read"] }
