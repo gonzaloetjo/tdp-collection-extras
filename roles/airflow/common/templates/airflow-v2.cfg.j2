@@ -142,7 +142,7 @@ allowed_deserialization_classes = airflow\..*
 
 # When a task is killed forcefully, this is the amount of time in seconds that
 # it has to cleanup after it is sent a SIGTERM, before it is SIGKILLED
-killed_task_cleanup_time = 60
+killed_task_cleanup_time = 604800
 
 # Whether to override params with dag_run.conf. If you pass some key-value pairs
 # through ``airflow dags backfill -c`` or
@@ -1032,12 +1032,12 @@ tls_key =
 # Task instances listen for external kill signal (when you clear tasks
 # from the CLI or the UI), this defines the frequency at which they should
 # listen (in seconds).
-job_heartbeat_sec = 20
+job_heartbeat_sec = 120
 
 # The scheduler constantly tries to trigger new tasks (look at the
 # scheduler section in the docs for more information). This defines
 # how often the scheduler should run (in seconds).
-scheduler_heartbeat_sec = 5
+scheduler_heartbeat_sec = 120
 
 # The number of times to try to schedule each DAG file
 # -1 indicates unlimited number
@@ -1070,7 +1070,7 @@ pool_metrics_interval = 5.0
 # If the last scheduler heartbeat happened more than scheduler_health_check_threshold
 # ago (in seconds), scheduler is considered unhealthy.
 # This is used by the health check in the "/health" endpoint
-scheduler_health_check_threshold = 30
+scheduler_health_check_threshold = 120
 
 # When you start a scheduler, airflow starts a tiny web server
 # subprocess to serve a health check if this is set to True
