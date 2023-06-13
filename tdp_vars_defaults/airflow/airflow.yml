@@ -173,11 +173,11 @@ airflow_kerberos:
 
 # Ldap
 airflow_ldap:
-  server: "ldap://{{ groups['kdc'][0] }}.{{ domain }}"
-  search_base: "ou=users,c=io"
-  uid_field: "uid"
-  bind_user: "cn=Manager,ou=tdp,o=tosit,c=io"
-  bind_password: "secret"
+  server: "{{ ldap.address }}"
+  search_base: "{{ ldap.user_search_base }}"
+  uid_field: "{{ ldap.user_name_attribute }}"
+  bind_user: "{{ ldap.bind_dn }}"
+  bind_password: "{{ ldap.password }}"
   group_field: "gidNumber"
   role_admin: "Admin"
   user_registration: True
