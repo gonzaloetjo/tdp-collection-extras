@@ -22,7 +22,6 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-RuntimeDirectory=airflow-flower
 EnvironmentFile={{ airflow_env_file }}
 User={{ airflow_user }}
 Group={{ airflow_group }}

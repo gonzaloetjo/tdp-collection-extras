@@ -45,7 +45,7 @@ def print_value(value, ts=None):
 
 
 with DAG(
-    dag_id='example_xcom_args',
+    dag_id='tdp_user-example_xcom_args',
     default_args=default_args,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
@@ -59,7 +59,7 @@ with DAG(
     print_value(generate_value())
 
 with DAG(
-    "example_bash_operator",
+    "tdp_user-example_bash_operator",
     default_args=default_args,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,

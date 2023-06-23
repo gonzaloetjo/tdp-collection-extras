@@ -22,9 +22,7 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-RuntimeDirectory=airflow-worker
 EnvironmentFile={{ airflow_env_file }}
-Environment="PATH=/opt/tdp/airflow/bin:/sbin:/bin:/usr/sbin:/usr/bin"
 User={{ airflow_user }}
 Group={{ airflow_group }}
 Type=simple

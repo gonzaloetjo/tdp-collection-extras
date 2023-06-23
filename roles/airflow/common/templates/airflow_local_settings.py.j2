@@ -21,6 +21,8 @@ from airflow.configuration import conf
 from airflow.exceptions import AirflowClusterPolicyViolation
 from airflow.models.baseoperator import BaseOperator
 from airflow.models import DAG
+import inspect
+import re
 
 
 def get_current_user(task) -> str:
@@ -31,14 +33,25 @@ def get_current_user(task) -> str:
 
 # [START dag policy]
 
-def validate_owner(dag: DAG) -> None:
+queues = {"tdp_user": "edge", 
+         "smoke_user": "edge"}
+
+
+
+def validate_dag_name(dag: DAG):
+    for task in dag.tasks:
+        if not dag.dag_id.startswith(task.owner):
+            raise AirflowClusterPolicyViolation(
+                                f"The DAG ID must start with the name of the owner. Current value: {dag.dag_id}"
+                            )
+
+def validate_dag_owner(dag: DAG):
     for task in dag.tasks:
         if not task.owner or task.owner.lower() == conf.get('operators',
                                                         'default_owner'):
             raise AirflowClusterPolicyViolation(
                 f"""DAG {dag.dag_id} must have a valid owner. Current value: {task.owner}"""
             )
-
 
 def validate_run_as_user(dag: DAG):
     for task in dag.tasks:
@@ -47,18 +60,22 @@ def validate_run_as_user(dag: DAG):
                 f"""run_as_user must be same as DAG owner. Current owner: {task.owner} | current run_as_user: {task.run_as_user}"""
             )
         
-def validate_run_as_user_queue(dag: DAG) -> None:
-    queues = {"tdp_user": "edge", 
-              "smoke_user": "edge"}
+def validate_run_as_user_queue(dag: DAG):
     
     for task in dag.tasks:
         if task.run_as_user:
-            if task.queue not in queues:
+            if task.queue not in queues[task.run_as_user]:
                 raise AirflowClusterPolicyViolation(
                     f"DAG {dag.dag_id} with impersonation cannot submit tasks to the queue: {task.queue}"
                 )
+        if hasattr(task, 'run_as_owner'):
+            if task.run_as_owner:
+                if task.queue not in queues[task.run_as_user]:
+                    raise AirflowClusterPolicyViolation(
+                        f"DAG {dag.dag_id} with impersonation cannot submit tasks to the queue: {task.queue}"
+                    )
 
-def validate_run_as_user_access_control(dag: DAG) -> None:
+def validate_run_as_user_access_control(dag: DAG):
     for task in dag.tasks:
         if task.run_as_user:
             dag_edit_roles = [key for key, value in dag.access_control.items() if "can_edit" in value or "can_dag_edit" in value]
@@ -66,22 +83,37 @@ def validate_run_as_user_access_control(dag: DAG) -> None:
                 raise AirflowClusterPolicyViolation(
                     f"DAGs with impersonation must be edited only by the DAG owner. Current owner : {task.owner} | can_edit users: {dag_edit_roles}"
                 )
-            
-def validate_dag_name(dag: DAG) -> None:
+
+        if hasattr(task, 'run_as_owner'):
+            if task.run_as_owner:
+                dag_edit_roles = [key for key, value in dag.access_control.items() if "can_edit" in value or "can_dag_edit" in value]
+                if any(role != task.owner for role in dag_edit_roles):
+                    raise AirflowClusterPolicyViolation(
+                        f"DAGs with impersonation must be edited only by the DAG owner. Current owner : {task.owner} | can_edit users: {dag_edit_roles}"
+                    )
+
+def validate_spark_proxy_user(dag: DAG):
     for task in dag.tasks:
-        if not dag.dag_id.startswith(task.owner + "-"):
-            raise AirflowClusterPolicyViolation(
-                                f"DAG id must be: '{task.owner}-*'. Current value: {dag.dag_id}"
-                            )
+        if hasattr(task, '_proxy_user'):
+            if task._proxy_user and task._proxy_user != task.owner:
+                raise AirflowClusterPolicyViolation(
+                    f"proxy_user must be the same as DAG owner. Current owner: {task.owner} | current proxy_user: {task._proxy_user}"
+                )
+
+def validate_WebHDFSHook_proxy_user(dag: DAG):
+    # TODO : validate proxy_user in WebHDFSHook hook
+    pass
 
 DAG_RULES: List[Callable[[DAG], None]] = [
-    validate_owner,
+    validate_dag_name,
+    validate_dag_owner,
     validate_run_as_user,
     validate_run_as_user_queue,
     validate_run_as_user_access_control,
-    validate_dag_name
-]
+    validate_spark_proxy_user,
+    validate_WebHDFSHook_proxy_user,
 
+]
 
 def _check_dag_rules(current_dag: DAG):
     """Check dag rules for given task."""

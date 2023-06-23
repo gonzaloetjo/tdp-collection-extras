@@ -7,10 +7,3 @@
     state: stopped
     enabled: true
     daemon_reload: true
-
-- name: Stop airflow kerberos service
-  systemd:
-    name: airflow-kerberos
-    state: stopped
-    enabled: true
-    daemon_reload: true
