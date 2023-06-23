@@ -106,7 +106,7 @@ flower_basic_auth_password: admin123
 
 # Airflow connections params
 airflow_hive:
-  conn_id: hiveserver2_tdp
+  conn_id: hive_cli_tdp
   conn_type: hive_cli
   conn_schema: default
   host: "{{ groups['hive_s2'][1] | tosit.tdp.access_fqdn(hostvars) }}"
@@ -123,9 +123,10 @@ airflow_spark:
 airflow_webhdfs:
   conn_id: webhdfs_tdp
   conn_type: hdfs
-  conn_host: "{{ groups['hdfs_nn'][1] }},{{ groups['hdfs_nn'][1] }}"
+  conn_host: "{{ groups['hdfs_nn'][0] | tosit.tdp.access_fqdn(hostvars) }},{{ groups['hdfs_nn'][1] | tosit.tdp.access_fqdn(hostvars) }}"
   conn_port: "{{ hdfs_nn_https_port }}"
   use_ssl: "true"
+  verify: "{{ airflow_certs_dir }}/{{ ca_certificate_file }}"
 
 # Airflow connections
 airflow_connections_reset: true
@@ -150,7 +151,8 @@ airflow_connections:
     conn-port: "{{ airflow_webhdfs.conn_port }}"
     conn-extra: >-
       '{
-        "use_ssl": "{{ airflow_webhdfs.use_ssl }}"
+        "use_ssl": "{{ airflow_webhdfs.use_ssl }}",
+        "verify": "{{ airflow_webhdfs.verify }}"
       }'
 
 # Airflow hadoop env variables
