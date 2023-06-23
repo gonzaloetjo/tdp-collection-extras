@@ -24,7 +24,7 @@ dag = DAG('tdp_user-spark3-example',
 
 submit_operator = SparkSubmitOperator(
     task_id='spark_submit_task',
-    conn_id='spark_tdp',
+    conn_id='spark3_tdp',
     java_class='org.apache.spark.examples.SparkPi',
     application='/opt/tdp/spark-3.2.2-0.0-bin-tdp/examples/jars/spark-examples_2.12-3.2.2-0.0.jar',
     total_executor_cores='2',

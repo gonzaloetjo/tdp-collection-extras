@@ -116,9 +116,11 @@ airflow_hive:
   principal: "hive/{{ groups['hive_s2'][1] | tosit.tdp.access_fqdn(hostvars) }}@{{ realm }};transportMode=http;httpPath=cliservice;ssl=true;sslTrustStore=/etc/ssl/certs/truststore.jks;trustStorePassword=Truststore123!"
 
 airflow_spark:
-  conn_id: spark_tdp
+  conn_id: spark3_tdp
   conn_type: spark
   conn_host: yarn
+  spark_binary: spark3-submit
+
 
 airflow_webhdfs:
   conn_id: webhdfs_tdp
@@ -145,6 +147,10 @@ airflow_connections:
   - conn_id: "{{ airflow_spark.conn_id }}"
     conn-type: "{{ airflow_spark.conn_type }}"
     conn-host: "{{ airflow_spark.conn_host }}"
+    conn-extra: >-
+      '{
+        "spark-binary": "{{ airflow_spark.spark_binary }}"
+      }'
   - conn_id: "{{ airflow_webhdfs.conn_id }}"
     conn-type: "{{ airflow_webhdfs.conn_type }}"
     conn-host: "{{ airflow_webhdfs.conn_host }}"
