@@ -1,3 +1,8 @@
+"""
+Database "tdp_user" must be created manually : 
+CREATE DATABASE IF NOT EXISTS tdp_user LOCATION '/user/tdp_user/warehouse/tdp_user.db';
+"""
+
 from airflow import DAG
 from airflow.providers.apache.hive.operators.hive import HiveOperator
 from airflow.providers.apache.hive.hooks.hive import HiveServer2Hook
@@ -27,7 +32,6 @@ dag = DAG(
 )
 
 
-# Database "tdp_user" must be created manually : CREATE DATABASE IF NOT EXISTS tdp_user LOCATION '/user/tdp_user/warehouse/tdp_user.db';
 create_table = HiveOperator(
     task_id='create_table',
     hql='''USE tdp_user;

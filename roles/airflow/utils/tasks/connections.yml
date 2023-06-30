@@ -1,12 +1,4 @@
 ---
-- name: Create roles
-  command: "{{ airflow_executable }} roles create {{ item }}"
-  with_items: "{{ airflow_extra_roles }}"
-
-- name: Assign permissions to roles
-  command: "{{ airflow_executable }} roles add-perms {{ airflow_extra_roles|join(' ') }} -r '{{ item.resource }}' -a {{ item.actions|join(' ') }}"
-  with_items: "{{ airflow_roles_base_permissions }}"
-
 - name: Airflow | Delete connections
   command: "{{ airflow_executable }} connections delete {{ item.conn_id }}"
   with_items: "{{ airflow_connections }}"

@@ -59,7 +59,7 @@ def validate_run_as_user(dag: DAG):
             raise AirflowClusterPolicyViolation(
                 f"""run_as_user must be same as DAG owner. Current owner: {task.owner} | current run_as_user: {task.run_as_user}"""
             )
-        
+
 def validate_run_as_user_queue(dag: DAG):
     
     for task in dag.tasks:
