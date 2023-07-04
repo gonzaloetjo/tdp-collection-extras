@@ -1,0 +1,11 @@
+---
+- name: Set Redis bind address
+  lineinfile:
+    path: /etc/redis.conf
+    regexp: '^bind'
+    line: 'bind {{ redis_bind_address }}'
+
+- name: Template Airflow flower service file
+  template:
+    src: airflow-flower.service.j2
+    dest: /usr/lib/systemd/system/airflow-flower.service

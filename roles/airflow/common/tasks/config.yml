@@ -1,5 +1,0 @@
----
-- name: Template airflow.cfg file
-  template:
-    src: airflow.cfg.j2
-    dest: "{{ airflow_install_dir }}/airflow.cfg"

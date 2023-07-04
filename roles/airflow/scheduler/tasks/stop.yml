@@ -1,0 +1,7 @@
+---
+- name: Stop airflow scheduler service
+  systemd:
+    name: airflow-scheduler
+    state: stopped
+    enabled: "{{ airflow_start_on_boot }}"
+
